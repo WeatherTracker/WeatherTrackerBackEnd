@@ -33,7 +33,14 @@ def getdata(count):
                     time_info=weather_info[k]["time"]
                     for s in range(len(time_info)):
                         if time_info[s]["startTime"]==time_list[j]["startTime"] and time_info[s]["endTime"]==time_list[j]["endTime"]:
-                            data.update({weather_info[k]["description"]:time_info[s]["elementValue"][0]["value"]})
+                            if weather_info[k]["description"]=="天氣現象" or weather_info[k]["description"]=="天氣預報綜合描述" or weather_info[k]["description"]=="風向":
+                                data.update({weather_info[k]["description"]:time_info[s]["elementValue"][0]["value"]})
+                            else:
+                                try:
+                                    transfer=int(time_info[s]["elementValue"][0]["value"])
+                                except:
+                                    transfer=None
+                                data.update({weather_info[k]["description"]:transfer})
                 # times.append({"startTime":time_list[j]["startTime"],"endTime":time_list[j]["endTime"],"data":data})
                 times.append({"startTime":datetime.datetime.strptime(time_list[j]["startTime"], "%Y-%m-%d %H:%M:%S"),"endTime":datetime.datetime.strptime(time_list[j]["endTime"], "%Y-%m-%d %H:%M:%S"),"data":data})
                 times_dict.update({"times":times})

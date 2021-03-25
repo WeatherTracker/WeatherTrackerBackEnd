@@ -15,7 +15,6 @@ def flask_mongodb_atlas():
 @login.route('/register',methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        bigObject=(request.json)
         authData=request.form['email']
         ack={"code":200,
             "msg":"讚喔"
@@ -31,8 +30,10 @@ def mailTest():
         Verification.testmail(target)
         return "WOW"
 
-@login.route('/dateTimeTest',methods=['GET'])
+@login.route('/dateTimeTest',methods=['POST'])
 def dateTimeTest():
-    now=datetime.datetime.now()
-    s = datetime.datetime.strftime(now,'%Y-%m-%d %H:%M:%S')
-    return {"dateTime":s}
+    #dateTimeData=request.form['dateTime']
+    #datetime.datetime.strptime(dateTimeData,"%Y-%m-%d %H:%M")
+    return {"code":"200",
+            "msg":"OK"
+    }
