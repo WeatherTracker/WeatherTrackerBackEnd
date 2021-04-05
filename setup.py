@@ -5,6 +5,7 @@ CONNECTION_STRING = "mongodb://localhost:27017/calculated"
 client = pymongo.MongoClient(CONNECTION_STRING)
 calculated = client.calculated
 station=client.station
+user=client.user
 def get_calculated():
     return calculated
 
@@ -13,3 +14,6 @@ def get_station():
 
 def create_app():
     return app
+
+def getUser():
+    return user

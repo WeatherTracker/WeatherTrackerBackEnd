@@ -9,7 +9,7 @@ from setup import create_app
 from setup import get_calculated
 from flask import Flask, request, render_template,Blueprint
 app = create_app()
-db = get_calculated()
+calculatedDB = get_calculated()
 app.register_blueprint(login)
 app.register_blueprint(getQuery)
 app.config["JSON_AS_ASCII"] = False
