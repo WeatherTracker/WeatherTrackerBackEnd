@@ -48,44 +48,94 @@ def getdata(count):
         
         if County=="基隆市" or County=="台北市" or County=="新北市" or County=="桃園市":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="北部":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="台中市" or County=="彰化縣" or County=="南投縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="中部":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="雲林縣" or County=="嘉義縣" or County=="台南市":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="雲嘉南":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="高雄市" or County=="屏東縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="高屏":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="花蓮縣" or County=="台東縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="花東":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="新竹市" or County=="新竹縣"  or County=="苗栗縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="竹苗":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="宜蘭縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="宜蘭":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="澎湖縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="澎湖":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="金門縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="金門":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         if County=="馬祖縣":
             for i in range(len(forecast_all)):
+                forecast_date=datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")
+                try:
+                    forecast_value=int(forecast_all[i]["AQI"])
+                except:
+                    forecast_value=None
                 if forecast_all[i]["Area"]=="馬祖":
-                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_all[i]["AQI"],"ForecastDate":datetime.strptime(forecast_all[i]["ForecastDate"],"%Y-%m-%d")})
+                    forecast.append({"Area":forecast_all[i]["Area"],"AQI":forecast_value,"ForecastDate":forecast_date})
         
         url3="https://opendata.epa.gov.tw/webapi/api/rest/datastore/355000000I-000259?sort=SiteName&offset=0&limit=1000"#政府資料開放平台的AQI
         Data3 = requests.get(url3)
@@ -93,7 +143,11 @@ def getdata(count):
 
         for i in range(len(now_all["result"]["records"])):
             if now_all["result"]["records"][i]["SiteName"]==history_all["records"][0]["SiteName"]:
-                now.append({"AQI":now_all["result"]["records"][i]["AQI"],"Status":now_all["result"]["records"][i]["Status"],"PublishTime":datetime.strptime(now_all["result"]["records"][i]["PublishTime"].replace("/","-"),"%Y-%m-%d %H:%M:%S"),"Longitude":now_all["result"]["records"][i]["Longitude"],"Latitude":now_all["result"]["records"][i]["Latitude"]})
+                try:
+                    now_value=int(now_all["result"]["records"][i]["AQI"])
+                except:
+                    now_value=None
+                now.append({"AQI":now_value,"Status":now_all["result"]["records"][i]["Status"],"PublishTime":datetime.strptime(now_all["result"]["records"][i]["PublishTime"].replace("/","-"),"%Y-%m-%d %H:%M:%S"),"Longitude":now_all["result"]["records"][i]["Longitude"],"Latitude":now_all["result"]["records"][i]["Latitude"]})
 
         city={"SiteName":history_all["records"][0]["SiteName"],"County":history_all["records"][0]["County"],"now":now,"forecast":forecast,"history":history}
         SiteName=history_all["records"][0]["SiteName"]
