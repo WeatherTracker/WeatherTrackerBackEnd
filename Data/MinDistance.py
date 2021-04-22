@@ -1,8 +1,8 @@
-from setup import get_db
+from setup import get_station
 import math
-db = get_db()
-def CWS_min_distance(now_lat,now_lon):
-    all_data=db.CWB_station_location.find()
+db = get_station()
+def CwsMinDistance(now_lat,now_lon):
+    all_data=db.CWB_Station_Location.find()
     inf = float('Inf')
     min_d=inf
     SiteName=""
@@ -22,8 +22,8 @@ def CWS_min_distance(now_lat,now_lon):
     result.append(city)
     result.append(SiteName)
     return result
-def EPA_min_distance(now_lat,now_lon):
-    all_data=db.EPA_station_location.find()
+def EpaMinDistance(now_lat,now_lon):
+    all_data=db.EPA_Station_Location.find()
     inf = float('Inf')
     min_d=inf
     SiteName=""
@@ -38,9 +38,9 @@ def EPA_min_distance(now_lat,now_lon):
                 min_d=distance
                 SiteName=location
     return SiteName
-def write_3Days(now_lat,now_lon):
-    result=CWS_min_distance(now_lat,now_lon)#傳回測站的地區和縣市
-    SiteName=EPA_min_distance(now_lat,now_lon)#傳回測站的名稱
+def Write_3Days(now_lat,now_lon):
+    result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
+    SiteName=EpaMinDistance(now_lat,now_lon)#傳回測站的名稱
     city=result[0]
     district=result[1]
     print(city+" "+district+" "+SiteName)
@@ -52,7 +52,6 @@ def write_3Days(now_lat,now_lon):
         for j in range(len(i["forecast"])):
             timeString = i["forecast"][j]["ForecastDate"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
             AQI_data.append({"time":timeString,"value":i["forecast"][j]["AQI"]})
-    
     target_city=db.CWB_7Days.find({"city": city})
     UV=[]
     for i in target_city:
@@ -83,11 +82,11 @@ def write_3Days(now_lat,now_lon):
                     humidity.append({"time":timeString,"value":i["locations"][j]["times_3HR_point"][k]["data"]["相對濕度"]})
                     wind.append({"time":timeString,"value":i["locations"][j]["times_3HR_point"][k]["data"]["風速"]})
     data_3Days={}
-    data_3Days.update({"中央氣象局最近的測站所在縣市":city,"中央氣象局最近的測站所在地區":district,"環保署最近測站名稱":SiteName,"POP":rain_6hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"AQI":AQI_data,"UV":UV})
+    data_3Days.update({"city":city,"area":district,"siteName":SiteName,"POP":rain_6hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"AQI":AQI_data,"UV":UV})
     # print(data_3Days)
     return data_3Days
-def write_3_to_7Days(now_lat,now_lon):
-    result=CWS_min_distance(now_lat,now_lon)#傳回測站的地區和縣市
+def Write_3_To_7Days(now_lat,now_lon):
+    result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
     city=result[0]
     district=result[1]
     print(city+" "+district)
@@ -115,6 +114,6 @@ def write_3_to_7Days(now_lat,now_lon):
                     if "紫外線指數" in UV_dict.keys():
                         UV.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["紫外線指數"]})
     data_7Days={}
-    data_7Days.update({"中央氣象局最近的測站所在縣市":city,"中央氣象局最近的測站所在地區":district,"POP":rain_12hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"UV":UV})
+    data_7Days.update({"city":city,"area":district,"POP":rain_12hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"UV":UV})
     # print(data_7Days)
     return data_7Days

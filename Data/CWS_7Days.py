@@ -4,7 +4,7 @@ from pymongo import MongoClient
 import time
 import datetime
 count=0
-def getdata(count):
+def GetData(count):
     time_start=time.time()
     while count<=21:
         location={}
@@ -47,13 +47,13 @@ def getdata(count):
             location.update({all_district_info[i]["locationName"]:times_dict})
             
         result={"city":all["records"]["locations"][0]["locationsName"],"location":location}
-        writedata(result)
+        WriteData(result)
         # file = 'CWS_7Days.json'
         # with open(file, 'w',encoding='utf8') as obj:
         #     json.dump(result, obj, ensure_ascii=False)#把結果寫入CWS.json檔
     time_end=time.time()
     print("爬7天要花",time_end-time_start,"s")
-def writedata(result):
+def WriteData(result):
     client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
     db = client.station
     try:
@@ -67,4 +67,5 @@ def writedata(result):
         # print('寫入成功')
     except Exception as e:
         print(e)
-getdata(count)
+if __name__=='__main__':
+    GetData(count)

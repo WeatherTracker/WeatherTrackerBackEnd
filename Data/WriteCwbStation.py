@@ -5,7 +5,7 @@ import time
 from pymongo import MongoClient
 count=0
 # url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-001?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
-def getdata(count):
+def GetData(count):
     time_start=time.time()
     
     city={}
@@ -33,16 +33,16 @@ def getdata(count):
             station_data.update({district:{"lat":latitude,"lon":longitude}})
         city.update({station_info["records"]["locations"][0]["locationsName"]:station_data})
         # locationsName=station_info["records"]["locations"][0]["locationsName"]
-    writedata(city)
+    WriteData(city)
     # print(station_data)
     time_end=time.time()
     print("寫入中央氣象局測站資料要花",time_end-time_start,"s")
 
-def writedata(city):
+def WriteData(city):
     client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
     db = client.station
     try:
-        db.CWB_station_location.insert_one(
+        db.CWB_Station_Location.insert_one(
             {
                 "data":city
             }
@@ -53,4 +53,5 @@ def writedata(city):
     # file = 'CWS_2Days.json'
     # with open(file, 'w',encoding='utf8') as obj:
     #     json.dump(result, obj, ensure_ascii=False)#把結果寫入CWS.json檔
-getdata(count)
+if __name__ =='__main__':
+    GetData(count)
