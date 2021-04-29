@@ -8,7 +8,6 @@ count=0
 def Get_7Days_Data(count):
     time_start=time.time()
     while count<=21:
-        print("")
         location={}
         times_dict={}
         time_list=[]
