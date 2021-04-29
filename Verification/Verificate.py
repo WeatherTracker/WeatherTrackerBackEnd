@@ -1,33 +1,32 @@
 import email.message
-import tokenGenerator
+from flask_jwt_extended import create_access_token
+from .tokenGenerator import create_confirm_token
+from Verification import tokenGenerator
 from flask_pymongo import pymongo
 import smtplib
 import uuid
-CONNECTION_STRING = "mongodb://localhost:27017/calculated"
-client = pymongo.MongoClient(CONNECTION_STRING)
-user=client.user
-def setId(email,password):
-    userId=str(uuid.uuid4())
-    token=tokenGenerator.create_confirm_token(userId, expires_in=3600)
-    print(token)
-    user.auth.insert(
-        {
-            "email":email,
-            "password":password,
-            "userId":userId,
-            "token":token
-        }
-    )
-    return token
-   
+from setup import get_calculated,getUser
+# CONNECTION_STRING = "mongodb://localhost:27017/calculated"
+# client = pymongo.MongoClient(CONNECTION_STRING)
+# user=client.user
+user=getUser()
 
-def testMail(email,password):
+def testMail(target,password):
     msg=email.message.EmailMessage()
     msg["From"] = "fistjavamailtest@gmail.com"
-    msg["To"] = email
+    msg["To"] = str(target)
     msg["Subject"] = "您的WeatherTracker驗證信"
-    msg.set_content("https://a81c4d7b1bc5.ngrok.io/getTest"+setId(email,password))
+    token=str(setId(target,password)).split('\'')
+    msg.set_content("https://6c6955385a90.ngrok.io/tryMe?token="+token[1])
     server=smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server.login("fistjavamailtest@gmail.com","GodHasAPen2021")
     server.send_message(msg)
     server.close()
+
+def setId(email,password):
+    userId=str(uuid.uuid4())
+    token=tokenGenerator.create_confirm_token(email,password,expires_in=600)
+    #token=create_access_token(identity=email)
+    print(token)
+    return token
+   
