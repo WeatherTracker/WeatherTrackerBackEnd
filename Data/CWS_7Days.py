@@ -3,8 +3,9 @@ import json
 from pymongo import MongoClient
 import time
 import datetime
+import schedule
 count=0
-def GetData(count):
+def Get_7Days_Data(count):
     time_start=time.time()
     while count<=21:
         location={}
@@ -52,7 +53,7 @@ def GetData(count):
         # with open(file, 'w',encoding='utf8') as obj:
         #     json.dump(result, obj, ensure_ascii=False)#把結果寫入CWS.json檔
     time_end=time.time()
-    print("爬7天要花",time_end-time_start,"s")
+    print("寫入7天資料要花",time_end-time_start,"s")
 def WriteData(result):
     client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
     db = client.station
@@ -67,5 +68,8 @@ def WriteData(result):
         # print('寫入成功')
     except Exception as e:
         print(e)
-if __name__=='__main__':
-    GetData(count)
+# if __name__=='__main__':
+#     schedule.every().day.at('23:49').do(Get_7Days_Data,0)
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(1)

@@ -6,5 +6,7 @@ def get_station():
     return client.station
 def get_calculated():
     return client.calculated
+def get_event():
+    return client.event
 def create_app():
     return app

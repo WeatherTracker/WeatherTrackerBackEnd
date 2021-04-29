@@ -165,5 +165,5 @@ def WriteData(city, SiteName, County):
         print("寫入成功")
     except Exception as e:
         print(e)
-if __name__=='__main__':
-    GetData()
+# if __name__=='__main__':
+#     GetData()
