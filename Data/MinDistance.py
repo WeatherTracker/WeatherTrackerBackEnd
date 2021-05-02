@@ -1,15 +1,8 @@
-from flask import Flask,request,render_template
-from pymongo import MongoClient#讀取MongoDB資料庫中的文件
-import os
-from flask import jsonify
-import datetime
-from datetime import datetime,timedelta
+from setup import get_station
 import math
-import time
-client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
-db = client.station
-def CWS_min_distance(now_lat,now_lon):
-    all_data=db.CWB_station_location.find()
+db = get_station()
+def CwsMinDistance(now_lat,now_lon):
+    all_data=db.CWB_Station_Location.find()
     inf = float('Inf')
     min_d=inf
     SiteName=""
@@ -29,8 +22,8 @@ def CWS_min_distance(now_lat,now_lon):
     result.append(city)
     result.append(SiteName)
     return result
-def EPA_min_distance(now_lat,now_lon):
-    all_data=db.EPA_station_location.find()
+def EpaMinDistance(now_lat,now_lon):
+    all_data=db.EPA_Station_Location.find()
     inf = float('Inf')
     min_d=inf
     SiteName=""
@@ -45,9 +38,9 @@ def EPA_min_distance(now_lat,now_lon):
                 min_d=distance
                 SiteName=location
     return SiteName
-def write_3Days(now_lat,now_lon):
-    result=CWS_min_distance(now_lat,now_lon)#傳回測站的地區和縣市
-    SiteName=EPA_min_distance(now_lat,now_lon)#傳回測站的名稱
+def Write_3Days(now_lat,now_lon):
+    result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
+    SiteName=EpaMinDistance(now_lat,now_lon)#傳回測站的名稱
     city=result[0]
     district=result[1]
     print(city+" "+district+" "+SiteName)
@@ -58,7 +51,7 @@ def write_3Days(now_lat,now_lon):
         i.pop("_id")
         for j in range(len(i["forecast"])):
             timeString = i["forecast"][j]["ForecastDate"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-            AQI_data.append({timeString:i["forecast"][j]["AQI"]})
+            AQI_data.append({"time":timeString,"value":i["forecast"][j]["AQI"]})
     target_city=db.CWB_7Days.find({"city": city})
     UV=[]
     for i in target_city:
@@ -69,10 +62,9 @@ def write_3Days(now_lat,now_lon):
                     UV_dict=i["locations"][j]["times"][k]["data"]
                     if "紫外線指數" in UV_dict.keys():
                         timeString = i["locations"][j]["times"][k]["startTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-                        UV.append({timeString:i["locations"][j]["times"][k]["data"]["紫外線指數"]})
+                        UV.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["紫外線指數"]})
     
     target_city=db.CWB_3Days.find({"city": city})
-    rain_12hr=[]
     rain_6hr=[]
     temperature=[]
     humidity=[]
@@ -81,26 +73,23 @@ def write_3Days(now_lat,now_lon):
         i.pop("_id")
         for j in i["locations"]:
             if j==district:
-                for k in range(len(i["locations"][j]["times_12HR"])):
-                    timeString = i["locations"][j]["times_12HR"][k]["startTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-                    rain_12hr.append({timeString:i["locations"][j]["times_12HR"][k]["data"]["12小時降雨機率"]})
                 for k in range(len(i["locations"][j]["times_6HR"])):
                     timeString = i["locations"][j]["times_6HR"][k]["startTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-                    rain_6hr.append({timeString:i["locations"][j]["times_6HR"][k]["data"]["6小時降雨機率"]})
+                    rain_6hr.append({"time":timeString,"value":i["locations"][j]["times_6HR"][k]["data"]["6小時降雨機率"]})
                 for k in range(len(i["locations"][j]["times_3HR_point"])):
                     timeString = i["locations"][j]["times_3HR_point"][k]["dataTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-                    temperature.append({timeString:i["locations"][j]["times_3HR_point"][k]["data"]["溫度"]})
-                    humidity.append({timeString:i["locations"][j]["times_3HR_point"][k]["data"]["相對濕度"]})
-                    wind.append({timeString:i["locations"][j]["times_3HR_point"][k]["data"]["風速"]})
+                    temperature.append({"time":timeString,"value":i["locations"][j]["times_3HR_point"][k]["data"]["溫度"]})
+                    humidity.append({"time":timeString,"value":i["locations"][j]["times_3HR_point"][k]["data"]["相對濕度"]})
+                    wind.append({"time":timeString,"value":i["locations"][j]["times_3HR_point"][k]["data"]["風速"]})
     data_3Days={}
-    data_3Days.update({"12小時降雨機率":rain_12hr,"6小時降雨機率":rain_6hr,"溫度":temperature,"相對濕度":humidity,"風速":wind,"AQI":AQI_data,"紫外線":UV})
-    print(data_3Days)
-def write_3_to_7Days(now_lat,now_lon):
-    result=CWS_min_distance(now_lat,now_lon)#傳回測站的地區和縣市
+    data_3Days.update({"city":city,"area":district,"siteName":SiteName,"POP":rain_6hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"AQI":AQI_data,"UV":UV})
+    # print(data_3Days)
+    return data_3Days
+def Write_3_To_7Days(now_lat,now_lon):
+    result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
     city=result[0]
     district=result[1]
     print(city+" "+district)
-
     target_city=db.CWB_7Days.find({"city": city})
     rain_12hr=[]
     temperature=[]
@@ -113,37 +102,18 @@ def write_3_to_7Days(now_lat,now_lon):
             if j==district:
                 for k in range(len(i["locations"][j]["times"])):
                     timeString = i["locations"][j]["times"][k]["startTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
-                    rain_12hr.append({timeString:i["locations"][j]["times"][k]["data"]["12小時降雨機率"]})
+                    rain_12hr.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["12小時降雨機率"]})
                     
-                    temperature.append({timeString:i["locations"][j]["times"][k]["data"]["平均溫度"]})
+                    temperature.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["平均溫度"]})
                     
-                    humidity.append({timeString:i["locations"][j]["times"][k]["data"]["平均相對濕度"]})
+                    humidity.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["平均相對濕度"]})
                     
-                    wind.append({timeString:i["locations"][j]["times"][k]["data"]["最大風速"]})
+                    wind.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["最大風速"]})
                     
                     UV_dict=i["locations"][j]["times"][k]["data"]
                     if "紫外線指數" in UV_dict.keys():
-                        UV.append({timeString:i["locations"][j]["times"][k]["data"]["紫外線指數"]})
+                        UV.append({"time":timeString,"value":i["locations"][j]["times"][k]["data"]["紫外線指數"]})
     data_7Days={}
-    data_7Days.update({"12小時降雨機率":rain_12hr,"平均溫度":temperature,"平均相對濕度":humidity,"最大風速":wind,"紫外線指數":UV})
-    print(data_7Days)
-# @app.route('/query_weather/<string:TimeData>/<float:now_lat>/<float:now_lon>')
-def getData(TimeData,now_lat,now_lon):
-    now=datetime.now()
-    print(now)
-    ask=datetime.strptime(TimeData,"%Y-%m-%d %H:%M:%S.%f")
-    print(ask)
-    after_3days = now +timedelta(days = 3)
-    after_7days = now +timedelta(days = 7)
-    if ask<now:
-        print("history")
-    elif ask<after_3days:
-        print("in 3 Days")
-        write_3Days(now_lat,now_lon)
-    elif ask<after_7days:
-        print("3-7 Days")
-        write_3_to_7Days(now_lat,now_lon)
-    else:
-        print("  >7 Days use ACCU")
-
-getData("2021-03-26 23:59:59.628556","22.7254758","120.2628547")
+    data_7Days.update({"city":city,"area":district,"POP":rain_12hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"UV":UV})
+    # print(data_7Days)
+    return data_7Days

@@ -1,17 +1,18 @@
 from flask import Flask,request
-from flask_pymongo import pymongo
+from pymongo import MongoClient
 app = Flask(__name__)
-CONNECTION_STRING = "mongodb://localhost:27017/calculated"
-client = pymongo.MongoClient(CONNECTION_STRING)
+client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
 calculated = client.calculated
 station=client.station
 user=client.user
 def get_calculated():
     return calculated
-
 def get_station():
-    return station
-
+    return client.station
+def get_calculated():
+    return client.calculated
+def get_event():
+    return client.event
 def create_app():
     return app
 

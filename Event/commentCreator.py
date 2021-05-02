@@ -1,8 +1,8 @@
 from pymongo import MongoClient
 from datetime import datetime
 import json
-connect = MongoClient("mongodb://localhost:27017/calculated")
-db=connect.calculated
+from setup import get_calculated
+db=get_calculated()
 targetEvent=db.event.find_one({"eventID":"event01"})
 locate=targetEvent.get("locate")
 stationList=db.Station_list.find_one({"year":2020}).get("datas")
