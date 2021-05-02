@@ -5,9 +5,8 @@ import datetime
 import time
 import json
 from setup import get_station
-from MinDistance import CwsMinDistance,EpaMinDistance,Write_3Days,Write_3_To_7Days
-from HistoryMinDistance import HistoryMinDistance,WriteHistory
-
+from Data.MinDistance import CwsMinDistance,EpaMinDistance,Write_3Days,Write_3_To_7Days
+from Data.HistoryMinDistance import HistoryMinDistance,WriteHistory
 
 import schedule
 import threading

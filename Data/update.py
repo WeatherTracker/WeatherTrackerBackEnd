@@ -1,5 +1,5 @@
-from CWS_7Days import Get_7Days_Data
-from CWS_3Days import Get_3Days_Data
+from Data.CWS_7Days import Get_7Days_Data
+from Data.CWS_3Days import Get_3Days_Data
 import threading
 # from Data.PM2_5 import Get_PM2_5Data
 import schedule
