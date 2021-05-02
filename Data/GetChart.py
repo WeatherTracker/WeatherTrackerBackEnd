@@ -8,7 +8,6 @@ from setup import get_station
 from Data.MinDistance import CwsMinDistance,EpaMinDistance,Write_3Days,Write_3_To_7Days
 from Data.HistoryMinDistance import HistoryMinDistance,WriteHistory
 
-
 import schedule
 import threading
 GetChart=Blueprint("GetChart", __name__)
