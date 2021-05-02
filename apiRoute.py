@@ -8,16 +8,11 @@ from Verification.login import login
 from setup import create_app
 from setup import get_calculated,get_event
 from flask import Flask, request, render_template,Blueprint
-from AddEvent import AddEvent
-from GetChart import GetChart
-from GetCalendarMonth import GetCalendarMonth
-from DeleteEvent import DeleteEvent
-from update import update
-# from Data.CWS_7Days import Get_7Days_Data
-# from Data.CWS_3Days import Get_3Days_Data
-# from Data.PM2_5 import Get_PM2_5Data
-# import schedule
-# import time
+from Event.AddEvent import AddEvent
+from Data.GetChart import GetChart
+from Event.GetCalendarMonth import GetCalendarMonth
+from Event.DeleteEvent import DeleteEvent
+from Data.update import update
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -29,7 +24,7 @@ app.register_blueprint(AddEvent)
 app.register_blueprint(GetChart)
 app.register_blueprint(GetCalendarMonth)
 app.register_blueprint(DeleteEvent)
-app.register_blueprint(getQuery)
+app.register_blueprint(GetChart)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 @app.route('/')
