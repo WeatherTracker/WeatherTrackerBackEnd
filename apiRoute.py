@@ -15,9 +15,11 @@ from Event.DeleteEvent import DeleteEvent
 from Data.update import update
 app = create_app()
 jwt = JWTManager()
+app.config['SECRET_KEY'] = 'FIST'
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
 jwt.init_app(app)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
+app.config['PERMANENT_SESSION_LIFETIME'] =datetime.timedelta(hours=1)
 calculatedDB = get_calculated()
 app.register_blueprint(login)
 app.register_blueprint(AddEvent)
