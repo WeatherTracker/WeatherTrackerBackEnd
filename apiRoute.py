@@ -13,9 +13,12 @@ from Data.GetChart import GetChart
 from Event.GetCalendarMonth import GetCalendarMonth
 from Event.DeleteEvent import DeleteEvent
 from Data.update import update
+from datetime import timedelta
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
+app.config['SECRET_KEY'] = 'FISTBRO'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
 jwt.init_app(app)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
 calculatedDB = get_calculated()
