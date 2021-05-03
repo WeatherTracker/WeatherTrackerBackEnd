@@ -12,7 +12,7 @@ def testMail(target,password):
     msg["To"] = str(target)
     msg["Subject"] = "您的WeatherTracker驗證信"
     token=str(setId(target,password)).split('\'')
-    msg.set_content("http:140.121.197.130:5603/tryMe?token="+token[1])
+    msg.set_content("https://d38320452133.ngrok.io/verify?token="+token[1])
     server=smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server.login("fistjavamailtest@gmail.com","GodHasAPen2021")
     server.send_message(msg)
