@@ -2,14 +2,14 @@ from flask import request,jsonify,Blueprint
 from pymongo import MongoClient
 from setup import get_event
 from datetime import datetime,timedelta
-# import datetime
 from dateutil.relativedelta import relativedelta
+import time
 GetCalendarMonth=Blueprint("GetCalendarMonth", __name__)
 @GetCalendarMonth.route("/getCalendarMonth")
 def getDate():
+    begin=time.time()
     month=request.args["month"]
     userId=request.args["userId"]
-    print(userId)
     db=get_event()
     user=db.user.find_one({"userId":userId})
     event=user["currentEvents"]
@@ -18,23 +18,17 @@ def getDate():
     end=end + relativedelta(months=1)
     print(start)
     print(end)
-    date=[]
-    # print(start)
-    # print(end)
+    date=set()
     for i in range(len(event)):
         startTemp=event[i]["startTime"]
         endTemp=event[i]["endTime"]
-        
         while startTemp<=endTemp:
-            # print(bool(startTemp<=endTemp))
             if startTemp>=start and startTemp<=end:
-                date.append(startTemp.strftime("%Y-%m-%d"))
-                startTemp=startTemp+timedelta(days=1)
-    print(date)
-            
-    return jsonify({"eventsOnlyTime":list(set(date))})
-# start='2019-01-01'
-# end='2019-03-7'
+                date.add(startTemp.strftime("%Y-%m-%d"))
+            startTemp=startTemp+timedelta(days=1)
+    end2=time.time()
+    print(end2-begin)
+    return jsonify(sorted(date))
  
 # datestart=datetime.datetime.strptime(start,'%Y-%m-%d')
 # dateend=datetime.datetime.strptime(end,'%Y-%m-%d')

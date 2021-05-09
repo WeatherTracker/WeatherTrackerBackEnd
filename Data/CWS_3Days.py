@@ -3,11 +3,10 @@ import json
 import datetime
 import time
 from pymongo import MongoClient
-import schedule
-count=0
 # url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-001?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
-def Get_3Days_Data(count):
+def Get_3Days_Data():
     time_start=time.time()
+    count=0
     while count<=21:
         all_times_12HR=[]
         all_times_6HR=[]
@@ -142,13 +141,3 @@ def WriteData(result):
     # file = 'CWS_2Days.json'
     # with open(file, 'w',encoding='utf8') as obj:
     #     json.dump(result, obj, ensure_ascii=False)#把結果寫入CWS.json檔
-# def update3Days():
-#     schedule.every().day.at('00:06').do(Get_3Days_Data,0)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
-# if __name__=='__main__':
-#     schedule.every().day.at('23:49').do(Get_3Days_Data,0)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)

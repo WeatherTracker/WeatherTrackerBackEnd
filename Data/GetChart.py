@@ -1,7 +1,6 @@
 from flask import request,Blueprint,jsonify
 from pymongo import MongoClient#讀取MongoDB資料庫中的文件
 import datetime
-# from datetime import datetime,timedelta
 import time
 import json
 from setup import get_station
@@ -44,25 +43,3 @@ def getData():
         return "ACCU + history"
 
 # getData("2021-03-26 23:59:59.628556","22.7254758","120.2628547")
-
-    
-# def updater():
-#     schedule.every().day.at('00:37').do(Get_3Days_Data,0)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
-# if __name__ == '__main__':
-    # schedule.every().day.at('15:08').do(Get_3Days_Data,0)
-    # schedule.every().day.at('15:08').do(Get_7Days_Data,0)
-    # schedule.every().day.at('15:08').do(Get_PM2_5Data)
-    # while True:
-    #     app.debug = True
-    #     time.sleep(1)
-        
-    # t = threading.Thread(target=updater)
-    # t.start()
-    # app.debug = True
-    # port = int(os.environ.get('PORT', 5603))
-    # app.run(host='0.0.0.0', port=port)
-    # t.join()
-    # update3Days()

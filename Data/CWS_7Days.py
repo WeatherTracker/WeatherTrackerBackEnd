@@ -3,10 +3,9 @@ import json
 from pymongo import MongoClient
 import time
 import datetime
-import schedule
-count=0
-def Get_7Days_Data(count):
+def Get_7Days_Data():
     time_start=time.time()
+    count=0
     while count<=21:
         location={}
         times_dict={}
@@ -64,12 +63,5 @@ def WriteData(result):
                 "locations": result["location"]
             }}, upsert=True
         )
-        # self.collection.insert(data)
-        # print('寫入成功')
     except Exception as e:
         print(e)
-# if __name__=='__main__':
-#     schedule.every().day.at('23:49').do(Get_7Days_Data,0)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
