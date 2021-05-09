@@ -35,6 +35,7 @@ app.register_blueprint(GetCalendarDay)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
+
 def job1_task():
     threading.Thread(target=Get_3Days_Data).start()
 def job2_task():
