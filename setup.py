@@ -7,8 +7,6 @@ station=client.station
 user=client.user
 def get_calculated():
     return calculated
-
-    
 def get_station():
     return client.station
 def get_calculated():
