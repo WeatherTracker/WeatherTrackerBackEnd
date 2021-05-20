@@ -3,6 +3,7 @@ import json
 from pymongo import MongoClient
 from datetime import datetime
 import time
+from Data.Tag3DaysCreater import tagCreater,addAQITagToDB
 def Get_PM2_5Data():
     #現在AQI data
     time_start = time.time()
@@ -26,9 +27,11 @@ def Get_PM2_5Data():
         now.append({"AQI": now_value, "Status": now_all["records"][i]["Status"], "PublishTime": datetime.strptime(now_all["records"][i]["PublishTime"].replace(
             "/", "-"), "%Y-%m-%d %H:%M:%S"), "Longitude": now_all["records"][i]["Longitude"], "Latitude": now_all["records"][i]["Latitude"]})
 
+        
         County = now_all["records"][i]["County"]
         latest=forecast_all["records"][0]["PublishTime"]
         if County == "基隆市" or County == "臺北市" or County == "新北市" or County == "桃園市":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -40,9 +43,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "北部":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "臺中市" or County == "彰化縣" or County == "南投縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -54,9 +59,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "中部":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "雲林縣" or County == "嘉義縣" or County == "臺南市" or County == "嘉義市":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -68,9 +75,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "雲嘉南":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "高雄市" or County == "屏東縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -82,9 +91,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "高屏":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "花蓮縣" or County == "臺東縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -96,9 +107,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "花東":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "新竹市" or County == "新竹縣" or County == "苗栗縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -110,9 +123,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "竹苗":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "宜蘭縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -124,9 +139,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "宜蘭":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "澎湖縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -138,9 +155,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "澎湖":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "金門縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -152,9 +171,11 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "金門":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
         if County == "連江縣":
+            AQI=["AQI"]
             for j in range(len(forecast_all["records"])):
                 if forecast_all["records"][j]["PublishTime"]==latest:
                     forecast_date = datetime.strptime(
@@ -166,8 +187,10 @@ def Get_PM2_5Data():
                     if forecast_all["records"][j]["Area"] == "馬祖":
                         forecast.append(
                             {"Area": forecast_all["records"][j]["Area"], "AQI": forecast_value, "ForecastDate": forecast_date})
+                        AQI.append(forecast_value)
                 else:
                     break
+        forecast=addAQITagToDB(forecast,tagCreater(AQI))
         forecast=sorted(forecast, key = lambda i: i["ForecastDate"])
         city = {"SiteName": now_all["records"][i]["SiteName"],
                 "County": now_all["records"][i]["County"], "now": now, "forecast": forecast}
@@ -196,5 +219,3 @@ def WriteData(city, SiteName, County):
         )
     except Exception as e:
         print(e)
-# if __name__=='__main__':
-#     Get_PM2_5Data()

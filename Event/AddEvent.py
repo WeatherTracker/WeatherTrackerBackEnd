@@ -15,39 +15,39 @@ def create():
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     event["participants"]=[]
     db=get_event()
-    try:
-        db.user.insert_one({
-            "userId":"a",
-            "FCMToken":"123",
-            "userName":"王小名",
-            "currentEvents":[],
-            "pastEvents":[],
-            "AHPPreference":[],
-            "freeTime":[],
-            "hobbies":[]
-        })
-        db.user.insert_one({
-            "userId":"b",
-            "FCMToken":"123",
-            "userName":"王中名",
-            "currentEvents":[],
-            "pastEvents":[],
-            "AHPPreference":[],
-            "freeTime":[],
-            "hobbies":[]
-        })
-        db.user.insert_one({
-            "userId":"c",
-            "FCMToken":"123",
-            "userName":"王大名",
-            "currentEvents":[],
-            "pastEvents":[],
-            "AHPPreference":[],
-            "freeTime":[],
-            "hobbies":[]
-        })
-    except:
-        return jsonify({"msg":"database user insert fail"})
+    # try:
+    #     db.user.insert_one({
+    #         "userId":"a",
+    #         "FCMToken":"123",
+    #         "userName":"王小名",
+    #         "currentEvents":[],
+    #         "pastEvents":[],
+    #         "AHPPreference":[],
+    #         "freeTime":[],
+    #         "hobbies":[]
+    #     })
+    #     db.user.insert_one({
+    #         "userId":"b",
+    #         "FCMToken":"123",
+    #         "userName":"王中名",
+    #         "currentEvents":[],
+    #         "pastEvents":[],
+    #         "AHPPreference":[],
+    #         "freeTime":[],
+    #         "hobbies":[]
+    #     })
+    #     db.user.insert_one({
+    #         "userId":"c",
+    #         "FCMToken":"123",
+    #         "userName":"王大名",
+    #         "currentEvents":[],
+    #         "pastEvents":[],
+    #         "AHPPreference":[],
+    #         "freeTime":[],
+    #         "hobbies":[]
+    #     })
+    # except:
+    #     return jsonify({"msg":"database user insert fail"})
     host=event["hosts"]
     print(host)
     try:

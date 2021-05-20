@@ -49,22 +49,28 @@ class Config(object):
             'id':'job1',
             'func':'__main__:job1_task',
             'trigger':'interval',
-            'start_date':'2021-05-08 11:20:00',
+            'start_date':'2021-05-20 18:00:00',
             'hours':6
+            # 'start_date':'2021-05-20 16:23:00',
+            # 'minutes':1
         },
         {
             'id':'job2',
             'func':'__main__:job2_task',
             'trigger':'interval',
-            'start_date':'2021-05-08 11:20:00',
+            'start_date':'2021-05-20 18:00:00',
             'hours':6
+            # 'start_date':'2021-05-20 16:23:00',
+            # 'minutes':1
         },
         {
             'id':'job3',
             'func':'__main__:job3_task',
             'trigger':'interval',
-            'start_date':'2021-05-08 10:35:00',
+            'start_date':'2021-05-20 10:35:00',
             'hours':6
+            # 'start_date':'2021-05-20 16:16:00',
+            # 'minutes':1
         }
     ]
 @app.route('/')
