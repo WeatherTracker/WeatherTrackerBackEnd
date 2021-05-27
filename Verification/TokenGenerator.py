@@ -2,7 +2,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer
 from itsdangerous import SignatureExpired, BadSignature
 import binascii 
 from pyDes import des, CBC, PAD_PKCS5 
-def create_confirm_token(mail,password,expires_in=600):
+def create_confirm_token(mail,password,FCMToken,expires_in=600):
     SECRET_KEY = "FISTBRO"
     """
     利用itsdangerous來生成令牌，透過current_app來取得目前flask參數['SECRET_KEY']的值
@@ -11,7 +11,7 @@ def create_confirm_token(mail,password,expires_in=600):
     """
     secret_str = des_encrypt('FIST2021',password) 
     s = TimedJSONWebSignatureSerializer(SECRET_KEY, expires_in=expires_in)
-    return s.dumps({'email': mail,'hash_password':str(secret_str)})
+    return s.dumps({'email': mail,'hash_password':str(secret_str),'FCMToken':FCMToken})
 
 def create_token(mail,expires_in=36400):
     SECRET_KEY = "FISTBRO"
@@ -21,7 +21,7 @@ def create_token(mail,expires_in=36400):
     :return: 回傳令牌，參數為該註冊用戶的id
     """
     s = TimedJSONWebSignatureSerializer(SECRET_KEY, expires_in=expires_in)
-    return s.dumps({'email': mail})
+    return s.dumps({'email': str(mail)})
 
 def des_decrypt(secret_key, s): 
         iv = "DONTSTOP"

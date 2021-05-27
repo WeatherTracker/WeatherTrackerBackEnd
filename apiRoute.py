@@ -4,6 +4,7 @@ import json
 import datetime
 import uuid
 from flask_jwt_extended import JWTManager
+from Recommendation.recommand import recommand
 from Verification.login import login
 from setup import create_app
 from setup import get_calculated,get_event
@@ -18,11 +19,12 @@ app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
 app.config['SECRET_KEY'] = 'FISTBRO'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 jwt.init_app(app)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
 calculatedDB = get_calculated()
 app.register_blueprint(login)
+app.register_blueprint(recommand)
 app.register_blueprint(AddEvent)
 app.register_blueprint(GetChart)
 app.register_blueprint(GetCalendarMonth)

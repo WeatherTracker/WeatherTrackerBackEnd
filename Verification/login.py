@@ -14,7 +14,7 @@ from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
 from flask.json import jsonify
 from setup import get_calculated,getUser
-login = Blueprint('login',__name__)
+login = Blueprint('login',__name__,template_folder="templates")
 @login.route('/123')
 def flask_mongodb_atlas():
     return "Welcome to flask demo"
@@ -23,7 +23,6 @@ def tryMe():
     token=request.args['token']
     decoded = jwt.decode(token, 'FISTBRO', algorithms=['HS512'])
     s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
-    print(decoded)
     try:
         data = s.loads(token)  # 驗證
         email=data.get('email')
@@ -33,11 +32,13 @@ def tryMe():
             hashed=data.get('hash_password').split('\'')
             passwordbit=des_decrypt("FIST2021",hashed[1])
             password=str(passwordbit).split('\'')
+            FCMToken=data.get('FCMToken')
             user=getUser()
             user.auth.update(
             {"email" : email},
             {"$set":{
-            "password":password[1]
+            "password":password[1],
+            'FCMToken':FCMToken
             }
             },upsert=True)
             return "驗證成功"
@@ -54,16 +55,22 @@ def tryMe():
 
 @login.route('/signUp',methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
+    target=request.form['email']
+    user=getUser()
+    if(user.auth.find_one({'email':target})):
+        ack={"code":200,
+            "msg":"這個email已經註冊過了"
+            }
+        return ack
+    else:
         target=request.form['email']
         password=request.form['password']
-        Verificate.testMail(target,password)
+        FCMToken=request.form['FCMToken']
+        Verificate.testMail(target,password,FCMToken)
         ack={"code":200,
             "msg":"驗證信已發送"
             }
         return ack
-    else:
-        return'水喔'
 
 @login.route('/signIn',methods=['POST'])
 def signIn():
@@ -81,3 +88,47 @@ def signIn():
             "msg":"帳號或密碼錯誤"
         }
         return ack
+
+@login.route('/sendResetMail',methods=['POST'])
+def sendResetMail():
+    if request.method == 'POST':
+        target=request.form['email']
+        Verificate.newPassWordMail(target)
+        ack={"code":200,
+            "msg":"驗證信已發送"
+            }
+        return ack
+    else:
+        return'水喔'
+@login.route('/sendnewPassword')
+def passwordForm():
+    token=str(request.args['token'])
+    return render_template('newPassword.html',target=token)
+
+@login.route('/newPassword',methods=['POST'])
+def newpassword():
+    if request.method == 'POST':
+        mail=request.form.get('mail')       
+        s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
+        try:
+            data = s.loads(mail)  # 驗證
+            email=data.get('email')
+            if(session.get(mail)!=email):
+                session[mail]=email
+                session.permanent = True
+                password=(request.form.get('password'))
+                passwordack=(request.form.get('passwordack'))
+                if(password==passwordack):
+                    return "修改完成"
+                else:
+                    return "密碼與再次輸入不符"
+            else:
+                return "這個連結驗證過了"
+        except SignatureExpired:
+        #  當時間超過的時候就會引發SignatureExpired錯誤`
+            return('SignatureExpired, over time')
+        except BadSignature:
+        #  當驗證錯誤的時候就會引發BadSignature錯誤
+            return('BadSignature, No match')
+        except:
+            return "驗證失敗"
