@@ -114,11 +114,19 @@ def newpassword():
             data = s.loads(mail)  # 驗證
             email=data.get('email')
             if(session.get(mail)!=email):
+                user=getUser()
                 session[mail]=email
+                print(email)
                 session.permanent = True
                 password=(request.form.get('password'))
                 passwordack=(request.form.get('passwordack'))
                 if(password==passwordack):
+                    user.auth.update(
+                    {"email" : email},
+                    {"$set":{
+                    "password":password,
+                    }
+                    },upsert=True)
                     return "修改完成"
                 else:
                     return "密碼與再次輸入不符"
