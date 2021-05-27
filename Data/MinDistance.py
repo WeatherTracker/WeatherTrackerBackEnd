@@ -1,5 +1,6 @@
 from setup import get_station
 import math
+import json
 db = get_station()
 def CwsMinDistance(now_lat,now_lon):
     all_data=db.CWB_Station_Location.find()
@@ -122,3 +123,30 @@ def Write_3_To_7Days(now_lat,now_lon):
     data_7Days={}
     data_7Days.update({"city":city,"area":district,"POP":rain_12hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"UV":UV})
     return data_7Days
+def weatherIcon(now_lat,now_lon):
+    result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
+    city=result[0]
+    district=result[1]
+    print(city+" "+district)
+    target_city=db.CWB_7Days.find({"city": city})
+    weather=[]
+    for i in target_city:
+        i.pop("_id")
+        for j in i["locations"]:
+            if j==district:
+                for k in range(len(i["locations"][j]["times"])):
+                    timeString = i["locations"][j]["times"][k]["startTime"].strftime("%Y-%m-%d %H:%M:%S") # 轉成字串
+                    str1=timeString.split(" ")
+                    for s in range(len(i["locations"][j]["times"][k]["data"])):
+                        if "天氣現象" in i["locations"][j]["times"][k]["data"][s] and k%2==0 and str1[1]!="00:00:00":
+                            with open('data.json',"r",encoding="utf-8") as obj:
+                                ans=json.load(obj)
+                                for item in range(len(ans)):
+                                    if ans[item]["天氣描述"]==i["locations"][j]["times"][k]["data"][s]["天氣現象"]:
+                                        if str1[1]=="06:00:00" or str1[1]=="12:00:00":
+                                            description=ans[item]["白天"]
+                                        elif str1[1]=="18:00:00":
+                                            description=ans[item]["夜晚"]
+                                        break
+                            weather.append(description)
+    return weather

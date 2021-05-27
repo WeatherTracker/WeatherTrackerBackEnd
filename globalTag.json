@@ -1,0 +1,23 @@
+{
+    "targetAttribute": "temperature",
+    "tag": "冷氣團",
+    "tags": [
+        {
+            "priority":1,
+            "tag": "大陸冷氣團",
+            "conditions": [{ "relation": "<=", "value": 14 }]
+        },
+        {
+            "priority":2,
+            "tag": "強烈大陸冷氣團",
+            "conditions": [{ "relation": "<=", "value": 12 }]
+        },
+        {
+            "priority":3,
+            "tag": "寒流",
+            "conditions": [
+                { "relation": "<=", "value": 10 }
+            ]
+        }
+    ]
+}

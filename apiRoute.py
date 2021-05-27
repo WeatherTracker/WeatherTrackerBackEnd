@@ -15,10 +15,12 @@ from Event.GetCalendarMonth import GetCalendarMonth
 from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
+from Event.InOrOutEvent import InOrOutEvent
 import threading
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
 from Data.PM2_5 import Get_PM2_5Data
+from Data.GetWeatherIcon import GetWeatherIcon
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -32,6 +34,8 @@ app.register_blueprint(GetCalendarMonth)
 app.register_blueprint(DeleteEvent)
 app.register_blueprint(EditEvent)
 app.register_blueprint(GetCalendarDay)
+app.register_blueprint(GetWeatherIcon)
+app.register_blueprint(InOrOutEvent)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -49,27 +53,27 @@ class Config(object):
             'id':'job1',
             'func':'__main__:job1_task',
             'trigger':'interval',
-            'start_date':'2021-05-20 18:00:00',
+            'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-05-20 16:23:00',
+            # 'start_date':'2021-05-24 23:37:00',
             # 'minutes':1
         },
         {
             'id':'job2',
             'func':'__main__:job2_task',
             'trigger':'interval',
-            'start_date':'2021-05-20 18:00:00',
+            'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-05-20 16:23:00',
+            # 'start_date':'2021-05-24 23:37:00',
             # 'minutes':1
         },
         {
             'id':'job3',
             'func':'__main__:job3_task',
             'trigger':'interval',
-            'start_date':'2021-05-20 10:35:00',
+            'start_date':'2021-05-25 10:35:00',
             'hours':6
-            # 'start_date':'2021-05-20 16:16:00',
+            # 'start_date':'2021-05-22 16:37:00',
             # 'minutes':1
         }
     ]

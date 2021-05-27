@@ -3,13 +3,30 @@ import json
 from pymongo import MongoClient
 import time
 import datetime
-from Data.Tag7DaysCreater import tagCreater,add7DaysTagToDB
+from Data.Tag7DaysCreater import districtTagCreater,globalTagCreater,mergeTag,add7DaysTagToDB
 def Get_7Days_Data():
     time_start=time.time()
     count=0
+    url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-063?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
+    Data2 = requests.get(url)
+    globalAll=json.loads(Data2.text)#把json變成dictionary
+    for i in range(len(globalAll["records"]["locations"][0]["location"])):
+        if globalAll["records"]["locations"][0]["location"][i]["locationName"]=="中正區":
+            weather_info=globalAll["records"]["locations"][0]["location"][i]["weatherElement"]
+            for j in range(len(weather_info)):
+                if weather_info[j]["description"]=="平均溫度":
+                    globalTime=weather_info[j]["time"]
+                    data=["temperature"]
+                    for k in range(len(globalTime)):
+                        try:
+                            transfer=int(globalTime[k]["elementValue"][0]["value"])
+                        except:
+                            transfer=None
+                        data.append(transfer)
+            globalTag=globalTagCreater(data)
+            break
     while count<=21:
         location={}
-        times_dict={}
         time_list=[]
         if count<=1:#003,007
             url1 = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-00"+str((4*count+3))+"?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
@@ -25,6 +42,7 @@ def Get_7Days_Data():
         all_district_info=all["records"]["locations"][0]["location"]
         for i in range(len(all_district_info)):
             times=[]
+            times_dict={}
             POP=["POP"]
             temperature=["temperature"]
             humidity=["humidity"]
@@ -60,11 +78,11 @@ def Get_7Days_Data():
                 # times.append({"startTime":time_list[j]["startTime"],"endTime":time_list[j]["endTime"],"data":data})
                 times.append({"startTime":datetime.datetime.strptime(time_list[j]["startTime"], "%Y-%m-%d %H:%M:%S"),"endTime":datetime.datetime.strptime(time_list[j]["endTime"], "%Y-%m-%d %H:%M:%S"),"data":data})
                 times_dict.update({"times":times})
-            times=add7DaysTagToDB(times,tagCreater(POP))
-            times=add7DaysTagToDB(times,tagCreater(temperature))
-            times=add7DaysTagToDB(times,tagCreater(humidity))
-            times=add7DaysTagToDB(times,tagCreater(windSpeed))
-            times=add7DaysTagToDB(times,tagCreater(UV))
+            times=add7DaysTagToDB(times,districtTagCreater(POP))
+            times=add7DaysTagToDB(times,mergeTag(globalTag,districtTagCreater(temperature)))
+            times=add7DaysTagToDB(times,districtTagCreater(humidity))
+            times=add7DaysTagToDB(times,districtTagCreater(windSpeed))
+            times=add7DaysTagToDB(times,districtTagCreater(UV))
             times_dict.update({"times":times})
             location.update({all_district_info[i]["locationName"]:times_dict})
             

@@ -3,7 +3,7 @@ import json
 from pymongo import MongoClient
 from datetime import datetime
 import time
-from Data.Tag3DaysCreater import tagCreater,addAQITagToDB
+from Data.Tag3DaysCreater import districtTagCreater,addAQITagToDB
 def Get_PM2_5Data():
     #現在AQI data
     time_start = time.time()
@@ -190,7 +190,7 @@ def Get_PM2_5Data():
                         AQI.append(forecast_value)
                 else:
                     break
-        forecast=addAQITagToDB(forecast,tagCreater(AQI))
+        forecast=addAQITagToDB(forecast,districtTagCreater(AQI))
         forecast=sorted(forecast, key = lambda i: i["ForecastDate"])
         city = {"SiteName": now_all["records"][i]["SiteName"],
                 "County": now_all["records"][i]["County"], "now": now, "forecast": forecast}

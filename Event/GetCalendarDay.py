@@ -17,7 +17,10 @@ def getDay():
         startTime=event[i]["startTime"]
         endTime=event[i]["endTime"]
         if (endTime>=start and endTime<=end) or (startTime>=start and startTime<=end) or (startTime<=start and endTime>=end):
-            event[i]["startTime"]=datetime.strftime(event[i]["startTime"], "%Y-%m-%d %H:%M:%S")
-            event[i]["endTime"]=datetime.strftime(event[i]["endTime"], "%Y-%m-%d %H:%M:%S")
+            startTime=datetime.strftime(event[i]["startTime"], "%Y-%m-%d %H:%M:%S")
+            event[i]["startTime"]=startTime[:-3]
+            endTime=datetime.strftime(event[i]["endTime"], "%Y-%m-%d %H:%M:%S")
+            event[i]["endTime"]=endTime[:-3]
+            
             result.append(event[i])
     return jsonify(result)

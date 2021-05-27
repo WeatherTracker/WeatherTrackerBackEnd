@@ -87,22 +87,22 @@
             {
                 "priority":1,
                 "tag": "中量級(黃燈)",
-                "conditions": [{ "relation": ">=", "value": 2 }]
+                "conditions": [{ "relation": ">=", "value": 3 }]
             },
             {
                 "priority":2,
                 "tag": "高量級(橘燈)",
-                "conditions": [{ "relation": ">=", "value": 5 }]
+                "conditions": [{ "relation": ">=", "value": 6 }]
             },
             {
                 "priority":3,
                 "tag": "過量級(紅燈)",
-                "conditions": [{ "relation": ">=", "value": 7 }]
+                "conditions": [{ "relation": ">=", "value": 8 }]
             },
             {
                 "priority":4,
                 "tag": "危險級(紫燈)",
-                "conditions": [{ "relation": ">=", "value": 10 }]
+                "conditions": [{ "relation": ">=", "value": 11 }]
             }
         ]
     },

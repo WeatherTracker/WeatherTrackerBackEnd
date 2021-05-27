@@ -17,9 +17,9 @@ def create():
     db=get_event()
     # try:
     #     db.user.insert_one({
-    #         "userId":"a",
+    #         "userId":"d",
     #         "FCMToken":"123",
-    #         "userName":"王小名",
+    #         "userName":"賴岳均",
     #         "currentEvents":[],
     #         "pastEvents":[],
     #         "AHPPreference":[],
@@ -51,6 +51,7 @@ def create():
     host=event["hosts"]
     print(host)
     try:
+        
         db.currentEvent.insert_one(event)
             # db.CurrentEvent.insert_one({
             #     "eventId":123,

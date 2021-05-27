@@ -101,14 +101,13 @@ def fun3(condition,data,priority,resultTag):
     # print("relation & value & duration & min")
 def fun4():
     print("Condition is not find")
-def tagCreater(data):
+def districtTagCreater(data):
     # print(data)
-    with open('tag.json','r',encoding='utf-8')as obj:
+    with open('districtTag.json','r',encoding='utf-8')as obj:
         ans=json.load(obj)
         resultTag=[]
         for i in range(len(data)-1):
             resultTag.append(0)
-        # print(resultTag)
         tag=[]
         for item in ans:
             if item["targetAttribute"] == data[0]:
@@ -134,9 +133,41 @@ def tagCreater(data):
             else:
                 resultTag[i]=None
         resultTag.insert(0,data[0])
-        # print("標籤判斷結果")
-        # print(resultTag)
         return resultTag
+def globalTagCreater(data):
+    with open("globalTag.json","r",encoding="utf-8") as obj:
+        ans=json.load(obj)
+        resultTag=[]
+        for i in range(len(data)-1):
+            resultTag.append(0)
+        tag=[]
+        tags=ans.get("tags")
+        for i in tags:
+            result=i["conditions"]
+            priority=i["priority"]
+            tag.append(i["tag"])
+            for condition in result:
+                fun1(condition,data,priority,resultTag)
+        for i in range(len(resultTag)):
+            if resultTag[i]!=0:
+                resultTag[i]=tag[resultTag[i]-1]
+            else:
+                resultTag[i]=None
+        resultTag.insert(0,"temperature")
+        return resultTag
+def mergeTag(tag1,tag2):
+    result=[]
+    for i in range(1,len(tag1)):
+        if tag1[i]!=None and tag2[i]!=None:
+            result.append(tag1[i]+"/"+tag2[i])
+        elif tag1[i]!=None:
+            result.append(tag1[i])
+        elif tag2[i]!=None:
+            result.append(tag2[i])
+        else:
+            result.append(None)
+    result.insert(0,"temperature")
+    return result
 def add7DaysTagToDB(data,result):
     part=1
     for i in data:

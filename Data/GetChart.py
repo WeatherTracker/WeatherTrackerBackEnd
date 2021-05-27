@@ -25,7 +25,7 @@ def getData():
     if ask<today:
         print("history")
         history=WriteHistory(TimeData,now_lat,now_lon)
-        return jsonify(history)
+        return "history"
     elif ask<after_3days:
         print("in 3 Days")
         data_3Days=Write_3Days(now_lat,now_lon)
