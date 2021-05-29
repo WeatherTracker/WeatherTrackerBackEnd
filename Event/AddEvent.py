@@ -14,30 +14,14 @@ def create():
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     event["participants"]=[]
+    event
     db=get_event()
     host=event["hosts"]
     print(host)
     try:
-        
         db.currentEvent.insert_one(event)
-            # db.CurrentEvent.insert_one({
-            #     "eventId":123,
-            #     "eventName":eventName,
-            #     "isPublic":isPublic,
-            #     "latitude":latitude,
-            #     "longitude":longitude,
-            #     "startTime":startTime,
-            #     "endTime":endTime,
-            #     "participants":participants,
-            #     "hosts":hosts,
-            #     "isOutDoor":isOutDoor,
-            #     "staticHobbyClass":staticHobbyClass,
-            #     "staticHobbyTag":staticHobbyTag,
-            #     "hostRemark":hostRemark,
-            # })
     except:
         return jsonify({"code":404,"msg":"Database failed to add event."})
-    # event.pop("_id")
     eventId=event["eventId"]
     for i in range(len(host)):
         userId= event["hosts"][i]
