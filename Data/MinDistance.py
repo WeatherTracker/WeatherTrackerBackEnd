@@ -148,5 +148,5 @@ def weatherIcon(now_lat,now_lon):
                                         elif str1[1]=="18:00:00":
                                             description=ans[item]["夜晚"]
                                         break
-                            weather.append(description)
+                            weather.append(description[:-4])
     return weather

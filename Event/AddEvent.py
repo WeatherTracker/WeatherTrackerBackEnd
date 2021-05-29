@@ -15,39 +15,6 @@ def create():
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     event["participants"]=[]
     db=get_event()
-    # try:
-    #     db.user.insert_one({
-    #         "userId":"d",
-    #         "FCMToken":"123",
-    #         "userName":"賴岳均",
-    #         "currentEvents":[],
-    #         "pastEvents":[],
-    #         "AHPPreference":[],
-    #         "freeTime":[],
-    #         "hobbies":[]
-    #     })
-    #     db.user.insert_one({
-    #         "userId":"b",
-    #         "FCMToken":"123",
-    #         "userName":"王中名",
-    #         "currentEvents":[],
-    #         "pastEvents":[],
-    #         "AHPPreference":[],
-    #         "freeTime":[],
-    #         "hobbies":[]
-    #     })
-    #     db.user.insert_one({
-    #         "userId":"c",
-    #         "FCMToken":"123",
-    #         "userName":"王大名",
-    #         "currentEvents":[],
-    #         "pastEvents":[],
-    #         "AHPPreference":[],
-    #         "freeTime":[],
-    #         "hobbies":[]
-    #     })
-    # except:
-    #     return jsonify({"msg":"database user insert fail"})
     host=event["hosts"]
     print(host)
     try:
@@ -70,13 +37,14 @@ def create():
             # })
     except:
         return jsonify({"code":404,"msg":"Database failed to add event."})
-    event.pop("_id")
+    # event.pop("_id")
+    eventId=event["eventId"]
     for i in range(len(host)):
         userId= event["hosts"][i]
         user=db.user.find_one({"userId":userId})
         if user is not None:
-            description=user["currentEvents"]
+            currentEvents=user["currentEvents"]
             # description.append({"eventId":event["eventId"],"eventName":event["eventName"],"startTime":event["startTime"],"endTime":event["endTime"]})
-            description.append(event)
-            db.user.update_one({"userId":userId},{"$set":{"currentEvents":description}})
+            currentEvents.append(eventId)
+            db.user.update_one({"userId":userId},{"$set":{"currentEvents":currentEvents}})
     return jsonify({"code":200,"msg":"Database add event successful."})

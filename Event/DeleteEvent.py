@@ -11,7 +11,7 @@ def delete():
         host=askEvent["hosts"]
         print(host)
         for i in range(len(host)):
-            db.user.update({ "userId":host[i]},{ "$pull": { "currentEvents": { "eventId":event["eventId"] } } })
+            db.user.update({ "userId":host[i]},{ "$pull": { "currentEvents": event["eventId"] } })
         db.currentEvent.find_one_and_delete({"eventId":event["eventId"]})
     except:
         return jsonify({"code":404,"msg":"Database failed to delete event."})

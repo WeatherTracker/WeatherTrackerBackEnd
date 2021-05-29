@@ -9,21 +9,25 @@ from Verification.login import login
 from setup import create_app
 from setup import get_calculated,get_event
 from flask import Flask, request, render_template,Blueprint
+from Event.updateEvent import updateEvent
 from Event.AddEvent import AddEvent
-from Data.GetChart import GetChart
 from Event.GetCalendarMonth import GetCalendarMonth
 from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
 import threading
+from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
 from Data.PM2_5 import Get_PM2_5Data
 from Data.GetWeatherIcon import GetWeatherIcon
+from datetime import timedelta
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
+app.config['SECRET_KEY'] = 'FISTBRO'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 jwt.init_app(app)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']
 calculatedDB = get_calculated()
@@ -46,6 +50,8 @@ def job2_task():
     threading.Thread(target=Get_7Days_Data).start()
 def job3_task():
     threading.Thread(target=Get_PM2_5Data).start()
+def job4_task():
+    threading.Thread(target=updateEvent).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -75,6 +81,13 @@ class Config(object):
             'hours':6
             # 'start_date':'2021-05-22 16:37:00',
             # 'minutes':1
+        },
+        {
+            'id':'job4',
+            'func':'__main__:job4_task',
+            'trigger':'interval',
+            'start_date':'2021-05-30 00:00:00',
+            'days':1
         }
     ]
 @app.route('/')
