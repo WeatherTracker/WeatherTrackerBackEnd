@@ -3,13 +3,30 @@ import json
 from pymongo import MongoClient
 import time
 import datetime
-import schedule
-count=0
-def Get_7Days_Data(count):
+from Data.Tag7DaysCreater import districtTagCreater,globalTagCreater,mergeTag,add7DaysTagToDB
+def Get_7Days_Data():
     time_start=time.time()
+    count=0
+    url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-063?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
+    Data2 = requests.get(url)
+    globalAll=json.loads(Data2.text)#把json變成dictionary
+    for i in range(len(globalAll["records"]["locations"][0]["location"])):
+        if globalAll["records"]["locations"][0]["location"][i]["locationName"]=="中正區":
+            weather_info=globalAll["records"]["locations"][0]["location"][i]["weatherElement"]
+            for j in range(len(weather_info)):
+                if weather_info[j]["description"]=="平均溫度":
+                    globalTime=weather_info[j]["time"]
+                    data=["temperature"]
+                    for k in range(len(globalTime)):
+                        try:
+                            transfer=int(globalTime[k]["elementValue"][0]["value"])
+                        except:
+                            transfer=None
+                        data.append(transfer)
+            globalTag=globalTagCreater(data)
+            break
     while count<=21:
         location={}
-        times_dict={}
         time_list=[]
         if count<=1:#003,007
             url1 = "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-00"+str((4*count+3))+"?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
@@ -25,26 +42,48 @@ def Get_7Days_Data(count):
         all_district_info=all["records"]["locations"][0]["location"]
         for i in range(len(all_district_info)):
             times=[]
+            times_dict={}
+            POP=["POP"]
+            temperature=["temperature"]
+            humidity=["humidity"]
+            windSpeed=["windSpeed"]
+            UV=["UV"]
             for j in range(len(time_list)):
             
                 weather_info=all["records"]["locations"][0]["location"][i]["weatherElement"]
-                data={}
+                data=[]
                 
                 for k in range(len(weather_info)):
                     time_info=weather_info[k]["time"]
                     for s in range(len(time_info)):
                         if time_info[s]["startTime"]==time_list[j]["startTime"] and time_info[s]["endTime"]==time_list[j]["endTime"]:
                             if weather_info[k]["description"]=="天氣現象" or weather_info[k]["description"]=="天氣預報綜合描述" or weather_info[k]["description"]=="風向":
-                                data.update({weather_info[k]["description"]:time_info[s]["elementValue"][0]["value"]})
+                                data.append({weather_info[k]["description"]:time_info[s]["elementValue"][0]["value"]})
                             else:
                                 try:
                                     transfer=int(time_info[s]["elementValue"][0]["value"])
                                 except:
                                     transfer=None
-                                data.update({weather_info[k]["description"]:transfer})
+                                data.append({weather_info[k]["description"]:transfer})
+                                if weather_info[k]["description"]=="平均溫度":
+                                    temperature.append(transfer)
+                                elif weather_info[k]["description"]=="平均相對濕度":
+                                    humidity.append(transfer)
+                                elif weather_info[k]["description"]=="最大風速":
+                                    windSpeed.append(transfer)
+                                elif weather_info[k]["description"]=="12小時降雨機率":
+                                    POP.append(transfer)
+                                elif weather_info[k]["description"]=="紫外線指數":
+                                    UV.append(transfer)
                 # times.append({"startTime":time_list[j]["startTime"],"endTime":time_list[j]["endTime"],"data":data})
                 times.append({"startTime":datetime.datetime.strptime(time_list[j]["startTime"], "%Y-%m-%d %H:%M:%S"),"endTime":datetime.datetime.strptime(time_list[j]["endTime"], "%Y-%m-%d %H:%M:%S"),"data":data})
                 times_dict.update({"times":times})
+            times=add7DaysTagToDB(times,districtTagCreater(POP))
+            times=add7DaysTagToDB(times,mergeTag(globalTag,districtTagCreater(temperature)))
+            times=add7DaysTagToDB(times,districtTagCreater(humidity))
+            times=add7DaysTagToDB(times,districtTagCreater(windSpeed))
+            times=add7DaysTagToDB(times,districtTagCreater(UV))
+            times_dict.update({"times":times})
             location.update({all_district_info[i]["locationName"]:times_dict})
             
         result={"city":all["records"]["locations"][0]["locationsName"],"location":location}
@@ -64,12 +103,7 @@ def WriteData(result):
                 "locations": result["location"]
             }}, upsert=True
         )
-        # self.collection.insert(data)
-        # print('寫入成功')
     except Exception as e:
         print(e)
-# if __name__=='__main__':
-#     schedule.every().day.at('23:49').do(Get_7Days_Data,0)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
+if __name__ =='__main__':
+    Get_7Days_Data()
