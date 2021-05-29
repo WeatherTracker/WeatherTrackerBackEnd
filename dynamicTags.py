@@ -5,7 +5,7 @@ connect = MongoClient("mongodb://localhost:27017/calculated")
 db= connect.calculated
 historyData=db.Station_history_data
 hotCounter=0
-years=[2012,2013,2014,2015,2016,2017,2018,2019,2020]
+years=[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020]
 for j in years:
     print(j)
     station=db.Station_list.find_one({'year':j}).get('datas')
@@ -18,13 +18,20 @@ for j in years:
                 continue
         s=[0,0,0,0,0]
         new_tag=target.copy()
+
         for i in target:
-                #print(i.get('最高氣溫(C)'))
             new_tag.get(i)['dynamicTags']=[]
             if type(target.get(i).get('最高氣溫(C)'))==float:
                 if(target.get(i).get('最高氣溫(C)')>=36):
-                    new_tag.get(i).get('dynamicTags').append('炎熱')
-            if type(target.get(i).get('最低氣溫(C)'))==float:
+                    #炎熱寒冷標籤由於資料顆粒度較粗 皆採用當日最高溫計算
+                    if(target.get(i).get('最高氣溫(C)')>=38):
+                        if((target.get(i-1).get('最高氣溫(C)')>=38)and(target.get(i-2).get('最高氣溫(C)')>=38)):
+                            new_tag.get(i).get('dynamicTags').append('炎熱(紅燈)')
+                        else:
+                            new_tag.get(i).get('dynamicTags').append('炎熱(橘燈)')
+                    else:
+                        new_tag.get(i).get('dynamicTags').append('炎熱(黃燈)')
+            if type(target.get(i).get('最高氣溫(C)'))==float:
                 if(target.get(i).get('最低氣溫(C)')<=10):
                     if(target.get(i).get('最低氣溫(C)')<=6):
                         new_tag.get(i).get('dynamicTags').append('寒冷(橘燈)')

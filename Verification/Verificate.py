@@ -5,7 +5,7 @@ from Verification import TokenGenerator
 from flask_pymongo import pymongo
 import smtplib
 import uuid
-from setup import get_calculated,getUser
+from setup import get_calculated,getUser,getSever
 def testMail(target,password,FCMToken):
     msg=email.message.EmailMessage()
     msg["From"] = "fistjavamailtest@gmail.com"
@@ -13,7 +13,7 @@ def testMail(target,password,FCMToken):
     msg["Subject"] = "您的WeatherTracker驗證信"
     token=str(setId(target,password,FCMToken)).split('\'')
     #http:140.121.197.130:5603
-    msg.set_content("http:140.121.197.130:5603/verify?token="+token[1])
+    msg.set_content(getSever()+"/verify?token="+token[1])
     server=smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server.login("fistjavamailtest@gmail.com","GodHasAPen2021")
     server.send_message(msg)
@@ -27,7 +27,7 @@ def newPassWordMail(target):
     #http:140.121.197.130:5603
     mail=des_encrypt('FIST2021',target)
     token=str(newPassWordToken(mail)).split('\'')
-    msg.set_content("http:140.121.197.130:5603/sendnewPassword?token="+token[1])
+    msg.set_content(getSever()+"/sendnewPassword?token="+token[1])
     server=smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server.login("fistjavamailtest@gmail.com","GodHasAPen2021")
     server.send_message(msg)
