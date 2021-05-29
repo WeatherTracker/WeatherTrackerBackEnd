@@ -26,6 +26,7 @@ def nearest_ViewPoint(lat,lon,resultNumber=5):
                         target=result.index(i)
     print(result)
     return(result)
+nearest_ViewPoint(121.7735869,25.1505495)
         
 
 
