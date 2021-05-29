@@ -8,7 +8,7 @@ import uuid
 from . import Verificate
 import time
 from itsdangerous import TimedJSONWebSignatureSerializer,BadSignature,SignatureExpired
-from .TokenGenerator import des_decrypt,create_token
+from .TokenGenerator import des_decrypt,create_token,create_user_token
 from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,decode_token,create_access_token
 from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
@@ -34,11 +34,13 @@ def tryMe():
             password=str(passwordbit).split('\'')
             FCMToken=data.get('FCMToken')
             user=getUser()
+            userId=uuid.uuid4()
             user.auth.update(
             {"email" : email},
             {"$set":{
             "password":password[1],
-            'FCMToken':FCMToken
+            'FCMToken':FCMToken,
+            'userID':userId
             }
             },upsert=True)
             return "驗證成功"
@@ -78,7 +80,8 @@ def signIn():
     email=request.form['email']
     password=request.form['password']
     if(user.auth.find_one({'email':email,'password':password})):
-        token=create_token(email)
+        userId=user.auth.find_one({'email':email,'password':password}).get("userId")
+        token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)
         }

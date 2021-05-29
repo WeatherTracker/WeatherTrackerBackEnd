@@ -18,5 +18,7 @@ def create_app():
     return app
 def getUser():
     return user
+def getSever():
+    return serverIP
 def getViewPoint():
     return client.viewPoint
