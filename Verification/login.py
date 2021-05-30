@@ -34,13 +34,20 @@ def tryMe():
             password=str(passwordbit).split('\'')
             FCMToken=data.get('FCMToken')
             user=getUser()
+            spaceArray=[]
             userId=uuid.uuid4()
             user.auth.update(
             {"email" : email},
             {"$set":{
             "password":password[1],
             'FCMToken':FCMToken,
-            'userID':userId
+            'userId':userId,
+            'userName':"user",
+            'pastEvents':spaceArray,
+            'AHPPreference':spaceArray,
+            'freeTime':spaceArray,
+            'hobbies':spaceArray,
+            'currentEvents':spaceArray
             }
             },upsert=True)
             return "驗證成功"
@@ -55,6 +62,23 @@ def tryMe():
     except:
         return "驗證失敗"
 
+@login.route('/reprofile',methods=['POST'])
+def reprofile():
+    newName=request.form.get('userName')
+    email=request.form.get('email')
+    hobbies=request.form.get('hobbies')
+    user=getUser()
+    user.auth.update(
+            {"email" :email },
+            {"$set":{
+            'userName':newName,
+            'hobbies':hobbies
+            }
+            },upsert=True)
+    return{"code":200,
+            "msg":"修改完成"
+            }
+            
 @login.route('/signUp',methods=['GET', 'POST'])
 def register():
     target=request.form['email']

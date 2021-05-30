@@ -47,6 +47,9 @@ def des_encrypt(secret_key, s):
 
 def decode_token(token):
     s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
-    data = s.loads(token)  # 驗證
-    userId=data.get('userID')
-    return userId
+    try:
+        data = s.loads(token)  # 驗證
+        userId=data.get('userID')
+        return userId
+    except:
+        return False
