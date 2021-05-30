@@ -34,3 +34,11 @@ def des_encrypt(secret_key, s):
     k = des(secret_key, CBC, iv, pad=None, padmode=PAD_PKCS5) 
     en = k.encrypt(s, padmode=PAD_PKCS5) 
     return binascii.b2a_hex(en) 
+def decode_token(token):
+    s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
+    try:
+        data = s.loads(token)  # 驗證
+        userId=data.get('userID')
+        return userId
+    except:
+        return False

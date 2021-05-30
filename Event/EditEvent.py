@@ -11,6 +11,11 @@ def edit():
     eventId=event["eventId"]
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
+    eventObj=db.currentEvent.find({"eventId":eventId})
+    event["participants"]=eventObj["participants"]
+    event["dynamicTag"]=eventObj["dynamicTag"]
+    event["suggestion"]=eventObj["suggestion"]
+    event["hosts"]=eventObj["hosts"]
     # host=event["hosts"]
     # try:
     #     for i in range(len(host)):

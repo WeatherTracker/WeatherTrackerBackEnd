@@ -1,13 +1,21 @@
 from flask import request,jsonify,Blueprint
 from pymongo import MongoClient
 from setup import get_event
+from Verification.TokenGenerator import decode_token
 # from datetime import datetime,timedelta
 import datetime
 GetCalendarDay=Blueprint("GetCalendarDay", __name__)
 @GetCalendarDay.route("/getCalendarDay")
 def getDay():
     day=request.args["day"]
-    userId=request.args["userId"]
+    # userId=request.args["userId"]
+    #
+    token=request.args["userId"]
+    if decode_token(token)==False:
+        return None
+    else:
+        userId=decode_token(token)
+    #
     db=get_event()
     user=db.user.find_one({"userId":userId})
     ask=datetime.datetime.strptime(day,"%Y-%m-%d").date()
@@ -27,6 +35,12 @@ def getDay():
                 eventobj["startTime"]=startTime[:-3]
                 endTime=datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M:%S")
                 eventobj["endTime"]=endTime[:-3]
+                #
+                if userId==eventobj["hosts"][0]:
+                    eventobj["isAuth"]==True
+                else:
+                    eventobj["isAuth"]==False
+                #
                 eventobj.pop("_id")
                 result.append(eventobj)
     else:
