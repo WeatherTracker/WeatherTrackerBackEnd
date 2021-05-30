@@ -8,7 +8,7 @@ import uuid
 from . import Verificate
 import time
 from itsdangerous import TimedJSONWebSignatureSerializer,BadSignature,SignatureExpired
-from .TokenGenerator import des_decrypt,create_token
+from .TokenGenerator import des_decrypt,create_token,create_user_token
 from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,decode_token,create_access_token
 from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
@@ -34,11 +34,20 @@ def tryMe():
             password=str(passwordbit).split('\'')
             FCMToken=data.get('FCMToken')
             user=getUser()
+            spaceArray=[]
+            userId=uuid.uuid4()
             user.auth.update(
             {"email" : email},
             {"$set":{
             "password":password[1],
-            'FCMToken':FCMToken
+            'FCMToken':FCMToken,
+            'userId':userId,
+            'userName':"user",
+            'pastEvents':spaceArray,
+            'AHPPreference':spaceArray,
+            'freeTime':spaceArray,
+            'hobbies':spaceArray,
+            'currentEvents':spaceArray
             }
             },upsert=True)
             return "驗證成功"
@@ -53,6 +62,23 @@ def tryMe():
     except:
         return "驗證失敗"
 
+@login.route('/reprofile',methods=['POST'])
+def reprofile():
+    newName=request.form.get('userName')
+    email=request.form.get('email')
+    hobbies=request.form.get('hobbies')
+    user=getUser()
+    user.auth.update(
+            {"email" :email },
+            {"$set":{
+            'userName':newName,
+            'hobbies':hobbies
+            }
+            },upsert=True)
+    return{"code":200,
+            "msg":"修改完成"
+            }
+            
 @login.route('/signUp',methods=['GET', 'POST'])
 def register():
     target=request.form['email']
@@ -78,7 +104,8 @@ def signIn():
     email=request.form['email']
     password=request.form['password']
     if(user.auth.find_one({'email':email,'password':password})):
-        token=create_token(email)
+        userId=user.auth.find_one({'email':email,'password':password}).get("userId")
+        token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)
         }
