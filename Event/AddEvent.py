@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from setup import get_event
 from datetime import datetime
 import uuid
+from Verification.TokenGenerator import decode_token
 AddEvent=Blueprint("AddEvent", __name__)
 @AddEvent.route("/newEvent",methods=['Post'])
 def create():
@@ -14,17 +15,27 @@ def create():
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     event["participants"]=[]
-    event
+    event["dynamicTag"]=[]
+    event["suggestion"]=[]
+    
     db=get_event()
-    host=event["hosts"]
-    print(host)
+    # host=event["hosts"]
+    # print(host)
+    hosts=[]
+    token=event["hosts"]
+    for i in range(len(token)):
+        if decode_token(token)==False:
+            return None
+        else:
+            hosts.append(decode_token(token))
+    
     try:
         db.currentEvent.insert_one(event)
     except:
         return jsonify({"code":404,"msg":"Database failed to add event."})
     eventId=event["eventId"]
-    for i in range(len(host)):
-        userId= event["hosts"][i]
+    for i in range(len(hosts)):
+        userId= hosts[i]
         user=db.user.find_one({"userId":userId})
         if user is not None:
             currentEvents=user["currentEvents"]
