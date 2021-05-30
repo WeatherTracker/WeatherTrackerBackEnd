@@ -16,6 +16,8 @@ def edit():
     event["dynamicTag"]=eventObj["dynamicTag"]
     event["suggestion"]=eventObj["suggestion"]
     event["hosts"]=eventObj["hosts"]
+
+    
     # host=event["hosts"]
     # try:
     #     for i in range(len(host)):
