@@ -30,7 +30,7 @@ def fun2(condition,data,priority,resultTag,tagCondition):
         flag2=0
         flag3=0
         for i in range(1,9):
-            if data[i]==None:
+            if data[i]==None and i!=8:
                 continue
             elif data[i]>=value:
                 flag1=1

@@ -1,16 +1,17 @@
 from datetime import datetime
-from setup import get_event
+from setup import get_event,getUser
 def updateEvent():
-    db=get_event()
+    eventDb=get_event()
+    uesrDb=getUser()
     now=datetime.now()
-    result=db.currentEvent.find({'endTime': {'$lt': now}})
+    result=eventDb.currentEvent.find({'endTime': {'$lt': now}})
     for i in result:
         try:
-            for j in db.user.find({}):
+            for j in uesrDb.auth.find({}):
                 if i["eventId"] in j["currentEvents"]:
-                    db.user.update_one(j,{ "$push": { "pastEvents": i["eventId"] },"$pull": { "currentEvents": i["eventId"]} })
-            db.pastEvent.insert_one(i)
-            db.currentEvent.delete_one(i)
+                    uesrDb.auth.update_one(j,{ "$push": { "pastEvents": i["eventId"] },"$pull": { "currentEvents": i["eventId"]} })
+            eventDb.pastEvent.insert_one(i)
+            eventDb.currentEvent.delete_one(i)
             print("EveryDay Database updateEvent Success!!!")
         except:
             print("EveryDay Database updateEvent Flase!!!")

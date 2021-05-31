@@ -1,6 +1,6 @@
-from flask import request,jsonify,Blueprint
+from flask import request,jsonify,Blueprint,abort
 from pymongo import MongoClient
-from setup import get_event
+from setup import get_event,getUser
 from datetime import datetime
 import uuid
 from Verification.TokenGenerator import decode_token
@@ -17,29 +17,29 @@ def create():
     event["participants"]=[]
     event["dynamicTag"]=[]
     event["suggestion"]=[]
-    
-    db=get_event()
+    eventDb=get_event()
+    userDb=getUser()
     # host=event["hosts"]
     # print(host)
     hosts=[]
     token=event["hosts"]
     for i in range(len(token)):
-        if decode_token(token)==False:
-            return None
+        x=decode_token(token[i])
+        if x=="False":
+            abort(401)
         else:
-            hosts.append(decode_token(token))
-    
+            hosts.append(decode_token(x))
     try:
-        db.currentEvent.insert_one(event)
+        eventDb.currentEvent.insert_one(event)
     except:
         return jsonify({"code":404,"msg":"Database failed to add event."})
     eventId=event["eventId"]
     for i in range(len(hosts)):
         userId= hosts[i]
-        user=db.user.find_one({"userId":userId})
+        user=userDb.auth.find_one({"userId":userId})
         if user is not None:
             currentEvents=user["currentEvents"]
             # description.append({"eventId":event["eventId"],"eventName":event["eventName"],"startTime":event["startTime"],"endTime":event["endTime"]})
             currentEvents.append(eventId)
-            db.user.update_one({"userId":userId},{"$set":{"currentEvents":currentEvents}})
+            userDb.auth.update_one({"userId":userId},{"$set":{"currentEvents":currentEvents}})
     return jsonify({"code":200,"msg":"Database add event successful."})

@@ -34,8 +34,7 @@ def tryMe():
             password=str(passwordbit).split('\'')
             FCMToken=data.get('FCMToken')
             user=getUser()
-            spaceArray=[]
-            userId=uuid.uuid1()
+            userId=str(uuid.uuid4())
             user.auth.update(
             {"email" : email},
             {"$set":{
@@ -43,11 +42,19 @@ def tryMe():
             'FCMToken':FCMToken,
             'userId':userId,
             'userName':"user",
-            'pastEvents':spaceArray,
-            'AHPPreference':spaceArray,
-            'freeTime':spaceArray,
-            'hobbies':spaceArray,
-            'currentEvents':spaceArray
+            'pastEvents':[],
+            'AHPPreference':[0.33,0.33,0.33],
+            'freeTime':[],
+            'hobbies':[
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0],
+                [1, 1, 1],
+                [1, 1, 1]
+            ],
+            'currentEvents':[]
             }
             },upsert=True)
             return "驗證成功"
