@@ -16,12 +16,15 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
+# from Recommendation.scheduleV2 import 
 import threading
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
 from Data.PM2_5 import Get_PM2_5Data
 from Data.GetWeatherIcon import GetWeatherIcon
+from Profile.ViewProfile import ViewProfile
+from Profile.EditProfile import EditProfile
 from datetime import timedelta
 app = create_app()
 jwt = JWTManager()
@@ -40,6 +43,8 @@ app.register_blueprint(EditEvent)
 app.register_blueprint(GetCalendarDay)
 app.register_blueprint(GetWeatherIcon)
 app.register_blueprint(InOrOutEvent)
+app.register_blueprint(EditProfile)
+app.register_blueprint(ViewProfile)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
