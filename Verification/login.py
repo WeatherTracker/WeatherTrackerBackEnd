@@ -151,12 +151,14 @@ def newpassword():
                 user=getUser()
                 session[mail]=email
                 print(email)
+                email=str(des_decrypt("FIST2021",email.split('\'')[1]))
+                print(email.split('\'')[1])
                 session.permanent = True
                 password=(request.form.get('password'))
                 passwordack=(request.form.get('passwordack'))
                 if(password==passwordack):
                     user.auth.update(
-                    {"email" : email},
+                    {"email" : email.split('\'')[1]},
                     {"$set":{
                     "password":password,
                     }
