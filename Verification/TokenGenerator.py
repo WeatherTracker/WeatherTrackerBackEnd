@@ -48,7 +48,7 @@ def decode_token(token):
     s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
     try:
         data = s.loads(token)  # 驗證
-        userId=data.get('userID')
+        userId=data.get('userId')
         return userId
     except:
         return False
