@@ -2,21 +2,17 @@ from flask import request,jsonify,Blueprint,abort
 from pymongo import MongoClient
 from setup import get_event,getUser
 from Verification.TokenGenerator import decode_token
-# from datetime import datetime,timedelta
 import datetime
 GetCalendarDay=Blueprint("GetCalendarDay", __name__)
 @GetCalendarDay.route("/getCalendarDay")
 def getDay():
     day=request.args["day"]
     token=request.args["userId"]
-    # userId=request.args["userId"]
-    #
     x=decode_token(token)
     if x=="False":
         abort(401)
     else:
         userId=x
-    #
     eventDb=get_event()
     userDb=getUser()
     user=userDb.auth.find_one({"userId":userId})
@@ -26,7 +22,6 @@ def getDay():
         if user["currentEvents"]!=None:
             event=user["currentEvents"]
             start=datetime.datetime.strptime(day, "%Y-%m-%d")
-            # print(type(start))
             end=start+datetime.timedelta(days=1)
             result=[]
             for i in range(len(event)):
@@ -38,19 +33,16 @@ def getDay():
                     eventobj["startTime"]=startTime[:-3]
                     endTime=datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M:%S")
                     eventobj["endTime"]=endTime[:-3]
-                    #
                     if userId==eventobj["hosts"][0]:
-                        eventobj["isAuth"]==True
+                        eventobj["isAuth"]=True
                     else:
-                        eventobj["isAuth"]==False
-                    #
+                        eventobj["isAuth"]=False
                     eventobj.pop("_id")
                     result.append(eventobj)
     else:
         if user["pastEvents"]!=None:
             event=user["pastEvents"]
             start=datetime.datetime.strptime(day, "%Y-%m-%d")
-            # print(type(start))
             end=start+datetime.timedelta(days=1)
             result=[]
             for i in range(len(event)):
@@ -63,5 +55,6 @@ def getDay():
                     endTime=datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M:%S")
                     eventobj["endTime"]=endTime[:-3]
                     eventobj.pop("_id")
+                    eventobj["isAuth"]=False
                     result.append(eventobj)
     return jsonify(result)

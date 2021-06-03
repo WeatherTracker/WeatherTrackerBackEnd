@@ -44,16 +44,17 @@ def tryMe():
             'userName':"user",
             'pastEvents':[],
             'AHPPreference':[0.33,0.33,0.33],
-            'freeTime':[],
-            'hobbies':[
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0],
-                [1, 1, 1],
-                [1, 1, 1]
+            'hobbies':[],
+            'freeTime':[
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [True, True, True],
+                [True, True, True]
             ],
+            'barValue':[0.0,0.0,0.0],
             'currentEvents':[]
             }
             },upsert=True)
