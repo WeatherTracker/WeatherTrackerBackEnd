@@ -35,7 +35,7 @@ def tryMe():
             FCMToken=data.get('FCMToken')
             user=getUser()
             spaceArray=[]
-            userId=uuid.uuid1()
+            userId=str(uuid.uuid4())
             user.auth.update(
             {"email" : email},
             {"$set":{

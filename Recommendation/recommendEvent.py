@@ -3,7 +3,7 @@ import math
 def nearest_ViewPoint(lat,lon,resultNumber=5):
     calculated = MongoClient("localhost", 27017)
     db = calculated.client.viewPoint
-    viewPointArray=db.find_one({"descripe":"景點API"}).get("datas")
+    viewPointArray=db.find_one({"Listname":"1"}).get("Infos").get("info")
     result=[]
     sample={}
     for viewPoint in viewPointArray:
