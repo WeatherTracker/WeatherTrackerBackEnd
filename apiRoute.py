@@ -16,12 +16,17 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
+# from Recommendation.scheduleV2 import
+from Recommendation.recommend import recommend
+# from Recommendation.RecommendPoint import nearest_ViewPoint
 import threading
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
 from Data.PM2_5 import Get_PM2_5Data
 from Data.GetWeatherIcon import GetWeatherIcon
+from Profile.ViewProfile import ViewProfile
+from Profile.EditProfile import EditProfile
 from datetime import timedelta
 app = create_app()
 jwt = JWTManager()
@@ -40,6 +45,10 @@ app.register_blueprint(EditEvent)
 app.register_blueprint(GetCalendarDay)
 app.register_blueprint(GetWeatherIcon)
 app.register_blueprint(InOrOutEvent)
+app.register_blueprint(EditProfile)
+app.register_blueprint(ViewProfile)
+# app.register_blueprint(RecommendEvent)
+app.register_blueprint(recommend)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -52,6 +61,8 @@ def job3_task():
     threading.Thread(target=Get_PM2_5Data).start()
 def job4_task():
     threading.Thread(target=updateEvent).start()
+# def job5_task():
+#     threading.Thread(target=updateEvent).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -88,7 +99,14 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-30 00:00:00',
             'days':1
-        }
+        },
+        #  {
+        #     'id':'job5',
+        #     'func':'__main__:job5_task',
+        #     'trigger':'interval',
+        #     'start_date':'2021-06-04 00:00:00',
+        #     'days':1
+        # }
     ]
 @app.route('/')
 def index():

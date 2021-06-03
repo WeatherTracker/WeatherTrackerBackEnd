@@ -1,31 +1,38 @@
-from flask import jsonify,request,Blueprint
-from setup import get_event
+from flask import jsonify,request,Blueprint,abort
+from setup import get_event,getUser
+from Verification.TokenGenerator import decode_token
 InOrOutEvent=Blueprint("InOrOutEvent", __name__)
 @InOrOutEvent.route("/inOrOutEvent",methods=['PUT'])
-
+#讓使用者可以知道他是參加者或不是參加者
 def participate():
     ask=request.form
-    db=get_event()
+    eventDb=get_event()
+    userDb=getUser()
     eventId=ask["eventId"]
-    userId=ask["userId"]
+    token=ask["userId"]
+    x=decode_token(token)
+    if x=="False":
+        abort(401)
+    else:
+        userId=x
     action=ask["action"]
     if action=="True":
         try:
-            event=db.currentEvent.find_one({"eventId":eventId})
-            db.currentEvent.update_one({"eventId":eventId},{"$push":{"participants":userId}})
-            user=db.user.find_one({"userId":userId})
+            event=eventDb.currentEvent.find_one({"eventId":eventId})
+            eventDb.currentEvent.update_one({"eventId":eventId},{"$push":{"participants":userId}})
+            user=userDb.auth.find_one({"userId":userId})
             currentEvents=user["currentEvents"]
-            db.user.update_one({"userId":userId},{"$push":{"currentEvents":eventId}})
+            userDb.auth.update_one({"userId":userId},{"$push":{"currentEvents":eventId}})
             return jsonify({"code":200,"msg":"Participate in activities successful."})
         except:
             return jsonify({"code":404,"msg":"Participate in activities Flase!!!"})
     else:
         try:
-            event=db.currentEvent.find_one({"eventId":eventId})
+            event=eventDb.currentEvent.find_one({"eventId":eventId})
             participants=event["participants"]
             participants.remove(userId)
-            db.currentEvent.update_one({"eventId":eventId},{"$set":{"participants":participants}})
-            db.user.update({ "userId":userId},{ "$pull": { "currentEvents":eventId } })
+            eventDb.currentEvent.update_one({"eventId":eventId},{"$set":{"participants":participants}})
+            userDb.auth.update({ "userId":userId},{ "$pull": { "currentEvents":eventId } })
             return jsonify({"code":200,"msg":"Exit event successful."})
         except:
             return jsonify({"code":404,"msg":"Exit event Flase!!!"})

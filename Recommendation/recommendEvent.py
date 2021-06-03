@@ -1,16 +1,23 @@
 from pymongo import MongoClient
 import math
-def nearest_ViewPoint(lat,lon,resultNumber=5):
-    calculated = MongoClient("localhost", 27017)
-    db = calculated.client.viewPoint
-    viewPointArray=db.find_one({"Listname":"1"}).get("Infos").get("info")
+from flask import request,jsonify,Blueprint
+from setup import get_event
+RecommendEvent=Blueprint("RecommendEvent", __name__)
+@RecommendEvent.route("/recommendEvent")
+def nearest_ViewPoint():
+    eventDb=get_event()
+    latitude=request.args["latitude"]
+    longitude=request.args["longitude"]
+    resultNumber=5
+    viewPointArray=eventDb.viewPoint.find_one({"listName":"1"})
     result=[]
     sample={}
-    for viewPoint in viewPointArray:
-        x=lat-viewPoint.get("latitude")
-        y=lon-viewPoint.get("longitude")
+    for viewPoint in range(len(viewPointArray["Infos"]["Info"])):
+        # print(viewPoint)
+        x=latitude-viewPointArray["Infos"]["Info"][viewPoint]["latitude"]
+        y=longitude-viewPointArray["Infos"]["Info"][viewPoint]["longitude"]
         distance=math.sqrt(abs(x)**(2)+abs(y)**(2))
-        viewPoint["distance"]=distance
+        viewPointArray["Infos"]["Info"][viewPoint]["distance"]=distance
         target=0
         if(len(result)<resultNumber):
             result.append(viewPoint)
@@ -24,10 +31,7 @@ def nearest_ViewPoint(lat,lon,resultNumber=5):
                 for i in result:
                     if result[target].get("distance")>i.get("distance"):
                         target=result.index(i)
-    print(result)
-    return(result)
-nearest_ViewPoint(121.7735869,25.1505495)
-        
-
-
     
+    print(result)
+    return jsonify(result)
+# nearest_ViewPoint(121.7735869,25.1505495)

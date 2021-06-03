@@ -44,12 +44,16 @@ def des_encrypt(secret_key, s):
     k = des(secret_key, CBC, iv, pad=None, padmode=PAD_PKCS5) 
     en = k.encrypt(s, padmode=PAD_PKCS5) 
     return binascii.b2a_hex(en) 
-
 def decode_token(token):
-    s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
+    s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
     try:
+        token=token.split('\'')[1] 
         data = s.loads(token)  # 驗證
-        userId=data.get('userId')
-        return userId
-    except:
-        return False
+        encodedId=data.get('userId')
+        # print("在decode裡面的 encodedId",encodedId)
+        # userId=des_decrypt("FIST2021",encodedId)
+        # print("在decode裡面的userId",type(userId))
+        return encodedId
+    except Exception as e:
+        print(e)
+        return "False"

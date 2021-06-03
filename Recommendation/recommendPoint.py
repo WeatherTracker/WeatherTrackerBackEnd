@@ -1,14 +1,15 @@
 from pymongo import MongoClient
 import math
-def nearest_ViewPoint(lat,lon,resultNumber=5):
-    calculated = MongoClient("localhost", 27017)
-    db = calculated.client.viewPoint
-    viewPointArray=db.find_one({"descripe":"景點API"}).get("datas")
+from setup import get_event
+def nearest_ViewPoint(lat,lon):
+    eventDb=get_event()
+    viewPointArray=eventDb.viewPoint.find_one({"Listname":"1"}).get("Infos").get("Info")
     result=[]
     sample={}
+    resultNumber=5
     for viewPoint in viewPointArray:
-        x=lat-viewPoint.get("latitude")
-        y=lon-viewPoint.get("longitude")
+        y=float(lat)-viewPoint.get("Py")
+        x=float(lon)-viewPoint.get("Px")
         distance=math.sqrt(abs(x)**(2)+abs(y)**(2))
         viewPoint["distance"]=distance
         target=0
@@ -24,10 +25,9 @@ def nearest_ViewPoint(lat,lon,resultNumber=5):
                 for i in result:
                     if result[target].get("distance")>i.get("distance"):
                         target=result.index(i)
-    print(result)
-    return(result)
-nearest_ViewPoint(121.7735869,25.1505495)
-        
-
-
-    
+    ask=[]
+    for i in range(len(result)):
+        result_dict={}
+        result_dict.update({"Name":result[i]["Name"],"Description":result[i]["Description"],"Tel":result[i]["Tel"],"Add":result[i]["Add"],"Orgclass":result[i]["Orgclass"],"Ticketinfo":result[i]["Ticketinfo"],"Remarks":result[i]["Remarks"],"Changetime":result[i]["Changetime"],"Px":result[i]["Px"],"Py":result[i]["Py"]})
+        ask.append(result_dict)
+    return ask
