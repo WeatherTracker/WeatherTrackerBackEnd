@@ -19,8 +19,6 @@ def create():
     event["suggestion"]=[]
     eventDb=get_event()
     userDb=getUser()
-    # host=event["hosts"]
-    # print(host)
     hosts=[]
     token=event["hosts"]
     for i in range(len(token)):
@@ -28,7 +26,8 @@ def create():
         if x=="False":
             abort(401)
         else:
-            hosts.append(decode_token(x))
+            hosts.append(x)
+    event["hosts"]=hosts
     try:
         eventDb.currentEvent.insert_one(event)
     except:

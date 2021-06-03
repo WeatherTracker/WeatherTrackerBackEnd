@@ -13,20 +13,15 @@ def getDate():
     token=request.args["userId"]
     eventDb=get_event()
     userDb=getUser()
-    # print("這是token",token)
     x=decode_token(token)
-    # print("這是x",x)
     if x=="False":
         abort(401)
     else:
         userId=x
-    # print("這是我的userID",userId)
     user=userDb.auth.find_one({"userId":userId})
     start=datetime.strptime(month, "%Y-%m")
     end=datetime.strptime(month, "%Y-%m")
     end=end + relativedelta(months=1)
-    # print(start)
-    # print(end)
     date=set()
     user.pop("_id")
     print(user)
@@ -53,12 +48,3 @@ def getDate():
     end2=time.time()
     print("回傳當月活動總共花 ",str(end2-begin)," 秒")
     return jsonify(sorted(date))
- 
-# datestart=datetime.datetime.strptime(start,'%Y-%m-%d')
-# dateend=datetime.datetime.strptime(end,'%Y-%m-%d')
- 
-# data_list = []
-# while datestart<=dateend:
-#     data_list.append(datestart.strftime('%Y-%m-%d')) 
-#     datestart+=datetime.timedelta(days=1)
-# print(data_list)
