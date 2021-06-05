@@ -2,7 +2,7 @@ from flask import jsonify,request,Blueprint,abort
 from setup import get_event,getUser
 from Verification.TokenGenerator import decode_token
 InOrOutEvent=Blueprint("InOrOutEvent", __name__)
-@InOrOutEvent.route("/inOrOutEvent",methods=['PUT'])
+@InOrOutEvent.route("/inOrOutEvent",methods=['POST'])
 #讓使用者可以知道他是參加者或不是參加者
 def participate():
     ask=request.form

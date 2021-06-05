@@ -28,6 +28,7 @@ from Profile.ViewProfile import ViewProfile
 from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.GetRecommendTime import GetRecommendTime
+from Recommendation.updatePoint import updatePoint
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -62,8 +63,10 @@ def job3_task():
     threading.Thread(target=Get_PM2_5Data).start()
 def job4_task():
     threading.Thread(target=updateEvent).start()
-# def job5_task():
-#     threading.Thread(target=weatherDataUpdater).start()
+def job5_task():
+    threading.Thread(target=weatherDataUpdater).start()
+def job6_task():
+    threading.Thread(target=updatePoint).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -100,14 +103,21 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-30 00:00:00',
             'days':1
+        },
+        {
+            'id':'job5',
+            'func':'__main__:job5_task',
+            'trigger':'interval',
+            'start_date':'2021-06-06 06:00:00',
+            'days':1
+        },
+        {
+            'id':'job6',
+            'func':'__main__:job6_task',
+            'trigger':'interval',
+            'start_date':'2021-06-05 18:17:00',
+            'days':1
         }
-        # {
-        #     'id':'job5',
-        #     'func':'__main__:job5_task',
-        #     'trigger':'interval',
-        #     'start_date':'2021-06-03 17:46:00',
-        #     'days':1
-        # }
     ]
 @app.route('/')
 def index():

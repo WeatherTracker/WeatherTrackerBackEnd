@@ -6,12 +6,12 @@ titles = ["測站氣壓(hPa)", "海平面氣壓(hPa)", "測站最高氣壓(hPa)"
           "最大陣風風向(360degree)", "降水量(mm)", "降水時數(hour)", "最大十分鐘降水量(mm)", "最大六十分鐘降水量(mm)", "日照時數(hour)", "日照率(%)", "全天空日射量(MJ/M^2)", "能見度(km)", "A型蒸發量(mm)", "日最高紫外線指數", "總雲量(0~10)"]
 ############################################ 記得修改 ##########################################
 client = MongoClient('localhost', 27017)
-db = client['station']
-collect = db['stationListTest']
+db = client['calculated']
+collect = db['Station_list']
 # collect2 = db['Station_history_data']
-collect2 = db['hisTest']
+collect2 = db['Station_history_data']
 # collect3 = db['Station_caculated_data']
-collect3 = db['calTest']
+collect3 = db['calculated']
 ############################################ 記得修改 ##########################################
 
 

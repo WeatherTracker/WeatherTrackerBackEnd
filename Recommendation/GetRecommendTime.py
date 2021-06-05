@@ -7,12 +7,8 @@ GetRecommendTime=Blueprint("GetRecommendTime", __name__)
 def getData():
     token=request.form["userId"]
     eventId=request.form["eventId"]
-    print(eventId)
     whiteList=request.form.getlist("whiteList")
     blackList=request.form.getlist("blackList")
-    
-    print(whiteList)
-    print(blackList)
     x=decode_token(token)
     if x=="False":
         abort(401)

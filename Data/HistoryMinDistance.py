@@ -1,19 +1,13 @@
-from setup import get_station
+from setup import get_calculated
 import math
-db = get_station()
+import datetime
+calculatedDb = get_calculated()
 def HistoryMinDistance(TimeData,now_lat,now_lon):
     TimeData=TimeData[0:4]
-    # print(TimeData)
     year=int(TimeData)
-    latestYear=int(TimeData)-6
-    if(year<=latestYear):
-        all_data=db.Station_list.find({"year":year-1})
-    else:
-        all_data=db.Station_list.find({"year":2015})
+    all_data=calculatedDb.Station_list.find({"year":year})
     inf = float('Inf')
     min_d=inf
-    city=""
-    SiteName=""
     for item in all_data:
         for location in item["datas"]:
             station_lat=location["緯度"]
@@ -23,32 +17,34 @@ def HistoryMinDistance(TimeData,now_lat,now_lon):
             distance=math.sqrt(abs(x)**(2)+abs(y)**(2))
             if distance<min_d:
                 min_d=distance
-                city=location["城市"]
-                SiteName=location["站名"]
-            # print(item["datas"][location]["緯度"]+" "+item["datas"][location]["經度"])
-    
-    result=[]
-    result.append(city)
-    result.append(SiteName)
-    
-    print(result)
-    return result
+                stationId=location["站號"]
+    print(stationId)
+    return stationId
 def WriteHistory(TimeData,now_lat,now_lon):
-    result=HistoryMinDistance(TimeData,now_lat,now_lon)#傳回最近的測站的地區和縣市
-    city=result[0]
-    SiteName=result[1]
-    year=int(TimeData[0:4])
+    stationId=HistoryMinDistance(TimeData,now_lat,now_lon)#傳回最近的測站ID
+    # yesterday2=datetime.datetime.strptime(TimeData, "%Y-%m-%d")+datetime.timedelta(days=-2)
+    # yesterday=datetime.datetime.strptime(TimeData, "%Y-%m-%d")+datetime.timedelta(days=-1)
+    # # today=datetime.strptime(TimeData, "%Y-%m-%d")
+    # tomorrow=datetime.datetime.strptime(TimeData, "%Y-%m-%d")+datetime.timedelta(days=1)
+    # tomorrow2=datetime.datetime.strptime(TimeData, "%Y-%m-%d")+datetime.timedelta(days=2)
+    resultObj={}
     
-    TimeData=TimeData[5:10].replace("-","/")
-    print(TimeData)
-    target_data=db.Station_history_data.find({"city": city,"name":SiteName,"year":year})
-    result=HistoryMinDistance(TimeData,now_lat,now_lon)#傳回最近的測站的地區和縣市
-    for i in target_data:
-        temperature=i["datas"][TimeData]["氣溫(C)"]
-        humidity=i["datas"][TimeData]["相對溼度(%)"]
-        wind=i["datas"][TimeData]["風速(m/s)"]
-        UV=i["datas"][TimeData]["日最高紫外線指數"]
-    history={}
-    history.update({"參考測站年分":year,"測站所在縣市":city,"測站名稱":SiteName,"氣溫":temperature,"相對溼度":humidity,"風速":wind,"日最高紫外線指數":UV})
-    print(history)
-    return history    
+    queryDate = datetime.datetime.strptime(TimeData, "%Y-%m-%d")#datetime
+    targetDate=queryDate+datetime.timedelta(days=0)
+    print(targetDate)
+    TimeData = datetime.datetime.strftime(targetDate,"%Y-%m-%d")#string
+    # todayTimeData=TimeData
+    # y=" 00:00:00"
+    # todayTimeData=todayTimeData+y
+    year=targetDate.year
+    timeKey=str(targetDate.month).zfill(2)+"/"+str(targetDate.day).zfill(2)
+    target_data=calculatedDb.Station_history_data.find_one({"id":stationId,"year":year})
+
+    temperature=[{"time":TimeData,"value":target_data["datas"][timeKey]["氣溫(C)"]}]
+    humidity=[{"time":TimeData,"value":target_data["datas"][timeKey]["相對溼度(%)"]}]
+    windSpeed=[{"time":TimeData,"value":target_data["datas"][timeKey]["風速(m/s)"]}]
+    UV=[{"time":TimeData,"value":target_data["datas"][timeKey]["日最高紫外線指數"]}]
+    
+    history={"city":target_data["city"],"siteName":target_data["name"],"area":"","temperature":temperature,"humidity":humidity,"windSpeed":windSpeed,"UV":UV}
+    
+    return history

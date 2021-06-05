@@ -5,6 +5,7 @@ from datetime import datetime
 import uuid
 from Verification.TokenGenerator import decode_token
 from Event.eventTag import timeSegment
+from Event.suggest import suggest
 AddEvent=Blueprint("AddEvent", __name__)
 @AddEvent.route("/newEvent",methods=['Post'])
 def create():
@@ -15,8 +16,13 @@ def create():
         return jsonify({"msg":str(uuid.uuid4())})
     
     event["participants"]=[]
-    event["dynamicTags"]=timeSegment(event["startTime"],event["endTime"],float(event["latitude"]),float(event["longitude"]))
-    event["suggestions"]={}
+    dynamicTags=timeSegment(event["startTime"],event["endTime"],float(event["latitude"]),float(event["longitude"]))
+    event["dynamicTags"]=dynamicTags
+    if event["isOutDoor"]==True:
+        staticTag="戶外"
+    else:
+        staticTag="室內"
+    event["suggestions"]=suggest(staticTag,dynamicTags)
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     eventDb=get_event()
@@ -40,7 +46,6 @@ def create():
         user=userDb.auth.find_one({"userId":userId})
         if user is not None:
             currentEvents=user["currentEvents"]
-            # description.append({"eventId":event["eventId"],"eventName":event["eventName"],"startTime":event["startTime"],"endTime":event["endTime"]})
             currentEvents.append(eventId)
             userDb.auth.update_one({"userId":userId},{"$set":{"currentEvents":currentEvents}})
     return jsonify({"code":200,"msg":"Database add event successful."})

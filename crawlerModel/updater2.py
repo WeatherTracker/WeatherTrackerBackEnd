@@ -1,7 +1,6 @@
 import datetime
 import time
 import statistics
-import schedule
 import concurrent.futures
 from pymongo import MongoClient
 from crawlerModel.StationDownloader_V6 import *
@@ -33,13 +32,13 @@ def data_updater(today):
     # updateStationList(today.year)
     ############################################ 記得修改 ##########################################
     client = MongoClient('localhost', 27017)
-    db = client['station']
+    db = client['calculated']
     # collect = db['Station_list']
-    collect = db['historyTest']
+    collect = db['Station_list']
     # collect2 = db['Station_history_data']
-    collect2 = db['hisTest']
+    collect2 = db['Station_history_data']
     # collect3 = db['Station_caculated_data']
-    collect3 = db['calTest']
+    collect3 = db['calculated']
     ############################################ 記得修改 ##########################################
 
     # 更新歷史資料
@@ -95,16 +94,17 @@ def data_updater(today):
 
 
 def weatherDataUpdater():
-    # start = datetime.datetime(2021, 5, 18)
-    # end = datetime.datetime(2021, 6, 3)
-    # t1 = time.time()
-    # while start <= end:
-    #     print(start)
-    #     data_updater(start)  # DB只吃datetime不吃date
-    #     start += datetime.timedelta(days=1)
-    # t2 = time.time()
-    # print("")
-    # print("總花費"+str(t2-t1)+"秒")
-    # print(datetime.datetime.today())
     data_updater(datetime.datetime.today())
-# weatherDataUpdater()
+
+if __name__=="__main__":
+    start = datetime.datetime(2021, 6, 4)
+    end = datetime.datetime(2021, 6, 5)
+    t1 = time.time()
+    while start <= end:
+        print(start)
+        data_updater(start)  # DB只吃datetime不吃date
+        start += datetime.timedelta(days=1)
+    t2 = time.time()
+    print("")
+    print("總花費"+str(t2-t1)+"秒")
+    print(datetime.datetime.today())
