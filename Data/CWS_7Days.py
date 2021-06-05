@@ -105,5 +105,5 @@ def WriteData(result):
         )
     except Exception as e:
         print(e)
-if __name__ =='__main__':
-    Get_7Days_Data()
+# if __name__ =='__main__':
+#     Get_7Days_Data()
