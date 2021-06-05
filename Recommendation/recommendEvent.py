@@ -1,37 +1,16 @@
 from pymongo import MongoClient
 import math
 from flask import request,jsonify,Blueprint
-from setup import get_event
-RecommendEvent=Blueprint("RecommendEvent", __name__)
-@RecommendEvent.route("/recommendEvent")
-def nearest_ViewPoint():
-    eventDb=get_event()
-    latitude=request.args["latitude"]
-    longitude=request.args["longitude"]
-    resultNumber=5
-    viewPointArray=eventDb.viewPoint.find_one({"listName":"1"})
-    result=[]
-    sample={}
-    for viewPoint in range(len(viewPointArray["Infos"]["Info"])):
-        # print(viewPoint)
-        x=latitude-viewPointArray["Infos"]["Info"][viewPoint]["latitude"]
-        y=longitude-viewPointArray["Infos"]["Info"][viewPoint]["longitude"]
-        distance=math.sqrt(abs(x)**(2)+abs(y)**(2))
-        viewPointArray["Infos"]["Info"][viewPoint]["distance"]=distance
-        target=0
-        if(len(result)<resultNumber):
-            result.append(viewPoint)
-            for i in result:
-                if i.get("distance")<result[target].get("distance"):
-                    target=result.index(i)
-        else:
-            if(distance<=result[target].get("distance")):
-                del result[target]
-                result.append(viewPoint)
-                for i in result:
-                    if result[target].get("distance")>i.get("distance"):
-                        target=result.index(i)
-    
-    print(result)
-    return jsonify(result)
-# nearest_ViewPoint(121.7735869,25.1505495)
+#from setup import get_event
+client = MongoClient("localhost", 27017)
+def hobby_event(staticTag,lon,lat):
+    print(staticTag)
+    eventDb=client.event
+    recommendEventList=[]
+    recommendEvent=eventDb.currentEvent.find({"staticHobbyTag":staticTag,"isPublic":True})
+    for i in recommendEvent:
+        i.pop("_id")
+        print(i)
+        recommendEventList.append(i)
+    recommendEventList.sort(key=lambda s: pow((s.get("longitude")-float(lon)),2)+pow((s.get("latitude")-float(lat)),2))
+    return recommendEventList
