@@ -15,9 +15,8 @@ def create():
         return jsonify({"msg":str(uuid.uuid4())})
     
     event["participants"]=[]
-
-    event["dynamicTag"]=timeSegment(event["startTime"],event["endTime"],float(event["latitude"]),float(event["longitude"]))
-    event["suggestion"]=[]
+    event["dynamicTags"]=timeSegment(event["startTime"],event["endTime"],float(event["latitude"]),float(event["longitude"]))
+    event["suggestions"]={}
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
     eventDb=get_event()

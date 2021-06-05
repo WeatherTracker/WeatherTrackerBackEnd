@@ -22,6 +22,6 @@ def sendFCM(fcm_tokens, titleText, msg, data_message=None):
     response = messaging.send_multicast(message)
     print("success", response)
 
-
-if __name__ == "__main__":
+def getFCMtoken():
     sendFCM(token, "hi", "45245")
+# getFCMtoken()

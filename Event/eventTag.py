@@ -216,22 +216,23 @@ def mergeTag(data):#這邊還有 大陸冷氣團/寒冷(橘燈) 的問題
         UVIndex=4
     if UVIndex!=0:
         tag.append(UV_tag[UVIndex-1])
-    if "對敏感族群不健康(橘燈)" in data["AQI"]:
-        AQIIndex=1
-    if "對所有族群不健康(紅燈)" in data["AQI"]:
-        AQIIndex=2
-    if "非常不健康(紫燈)" in data["AQI"]:
-        AQIIndex=3
-    if "危害(黑燈)" in data["AQI"]:
-        AQIIndex=4
-    if AQIIndex!=0:
-        tag.append(AQI_tag[AQIIndex-1])
+    if "AQI" in data:
+        if "對敏感族群不健康(橘燈)" in data["AQI"]:
+            AQIIndex=1
+        if "對所有族群不健康(紅燈)" in data["AQI"]:
+            AQIIndex=2
+        if "非常不健康(紫燈)" in data["AQI"]:
+            AQIIndex=3
+        if "危害(黑燈)" in data["AQI"]:
+            AQIIndex=4
+        if AQIIndex!=0:
+            tag.append(AQI_tag[AQIIndex-1])
     if "強風" in data["windSpeed"]:
         tag.append("強風")
     return tag
 def timeSegment(startTime,endTime,latitude,longitude):
-    startTime=datetime.datetime.strptime(startTime,"%Y-%m-%d %H:%M:%S")
-    endTime=datetime.datetime.strptime(endTime,"%Y-%m-%d %H:%M:%S")
+    startTime=datetime.datetime.strptime(startTime,"%Y-%m-%d %H:%M")
+    endTime=datetime.datetime.strptime(endTime,"%Y-%m-%d %H:%M")
     now=datetime.datetime.now()
     Days3=now+datetime.timedelta(days=3)
     Days7=now+datetime.timedelta(days=7)
@@ -246,6 +247,7 @@ def timeSegment(startTime,endTime,latitude,longitude):
         # print(tag7)
     result=mergeSet(tag3,tag7)
     judge=mergeTag(result)
-    print(result)
-    print(judge)
+    # print(result)
+    # print(judge)
+    return judge
 # timeSegment("2021-06-05 12:30:00","2021-06-06 21:00:00",25.1505447,121.7735869)

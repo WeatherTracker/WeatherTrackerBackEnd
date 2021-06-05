@@ -1,18 +1,23 @@
+from flask.json import jsonify
 from pymongo import MongoClient
 import numpy as np
 import datetime
-import sys
-
+from Data.MinDistance import Write_3Days,Write_3_To_7Days
+from setup import get_event,getUser
 client = MongoClient('localhost', 27017)
-db = client['test']
-db_currentEvent = db['currentEvent']
-db_API = db['API']
-db_event = db['Event']
-db_user = db['user']
-data2 = db_API.find_one({"name": "sample2"})
-data2 = data2["content"]
-data7 = db_API.find_one({"name": "sample7"})
-data7 = data7["content"]
+eventDb = get_event()
+userDb=getUser()
+db_currentEvent = eventDb['currentEvent']
+# db_API = db['API']
+db_user = userDb['auth']
+
+# data2 = db_API.find_one({"name": "sample2"})
+# data2 = data2["content"]
+# data2=Write_3Days(now_lat,now_lon)
+
+# data7 = db_API.find_one({"name": "sample7"})
+# data7 = data7["content"]
+# data7=Write_3_To_7Days(now_lat,now_lon)
 
 # day2 = {"AQI": 24, "POP": 6, "UV": 24, "humidity": 3, "temperature": 3, "windSpeed": 3}
 day2 = {"POP": 6, "UV": 24, "humidity": 3, "temperature": 3, "windSpeed": 3}
@@ -21,8 +26,8 @@ table = None
 bundary = None
 
 
-def getBlockIndex(date):
-    firstBlock = data2["POP"][0]["time"]
+def getBlockIndex(date,data2):
+    firstBlock=datetime.datetime.strptime(data2["POP"][0]["time"],"%Y-%m-%d %H:%M:%S")
     if firstBlock.hour == 0 or firstBlock.hour == 12:
         firstBlock = firstBlock - datetime.timedelta(hours=6)
     distance = date - firstBlock
@@ -32,29 +37,30 @@ def getBlockIndex(date):
     return index
 
 
-def createTable():
+def createTable(data2,data7):
     global table
     global bundary
     table = []
-    bundary = data2["temperature"][-1]["time"]+datetime.timedelta(hours=3)
+    temp=datetime.datetime.strptime(data2["temperature"][-1]["time"],"%Y-%m-%d %H:%M:%S")
+    bundary = temp+datetime.timedelta(hours=3)
     print("bundary", bundary)
     for k in day2.keys():
         row = []
         if k == "POP":
             for i in data2[k]:
-                if i["dynamicTag"] != None:
+                if i["tag"] != None:
                     row += 2 * [1]
                 else:
                     row += 2 * [0]
         elif k == "UV":
             for i in data2[k]:
-                if i["dynamicTag"] != None:
+                if i["tag"] != None:
                     row += 8 * [1]
                 else:
                     row += 8 * [0]
         else:
             for i in data2[k]:
-                if i["dynamicTag"] != None:
+                if i["tag"] != None:
                     row += [1]
                 else:
                     row += [0]
@@ -64,9 +70,10 @@ def createTable():
         row = []
         if k != "UV":
             for i in data7[k]:
-                if i["time"] < bundary:
+                temp=datetime.datetime.strptime(i["time"],"%Y-%m-%d %H:%M:%S")
+                if temp < bundary:
                     continue
-                if i["dynamicTag"] != None:
+                if i["tag"] != None:
                     row += 4 * [1]
                 else:
                     row += 4 * [0]
@@ -102,12 +109,12 @@ def divideBlock(blockStart, blockEnd):
     return resultList
 
 
-def judgeByWeather(resultList):
+def judgeByWeather(resultList,data2):
     sum = 0
     total = 0
     for i in resultList:
-        s = getBlockIndex(i["blockStart"])
-        e = getBlockIndex(i["blockEnd"])
+        s = getBlockIndex(i["blockStart"],data2)
+        e = getBlockIndex(i["blockEnd"],data2)
         total += (e-s+1)*7
         try:
             sum += table[e]-table[s-1]
@@ -120,19 +127,10 @@ def judgeByWeather(resultList):
 
 
 def judgeByReserve(resultList, windowSize, participants):
-    # users = db.user.find({"userId": {"$in": participants}})
-    participants = [{"freeTime": [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [1, 1, 1],
-        [1, 1, 1]
-    ]}]
+    users = db_user.find({"userId": {"$in": participants}})
     sum = 0
     total = 0
-    for participant in participants:
+    for participant in users:
         for i in resultList:
             timeStamp = i["blockStart"]
             blockEnd = i["blockEnd"]
@@ -147,15 +145,18 @@ def judgeByReserve(resultList, windowSize, participants):
                 timeStamp += datetime.timedelta(hours=6)
     try:
         # print("保留度: ", sum/total*100)
-        return sum/total*100
+        if users.count()==0:
+            return 0.5
+        else:
+            return sum/total*100
     except Exception:  # 完全在凌晨舉辦的活動
         # print("完全在凌晨舉辦", 0)
         return 0
 
 
-def judgeByRationality(blockStart, whiteList, blackList):
+def judgeByRationality(blockStart, whiteList, blackList,eventStart):
     bias = 0
-    today = datetime.datetime.strptime("2021-04-29 18:00", "%Y-%m-%d %H:%M")  # 要改成now
+    today = datetime.datetime.now()  # 要改成now
     today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     for row in whiteList:
         h = int(row[0][:2])
@@ -173,6 +174,9 @@ def judgeByRationality(blockStart, whiteList, blackList):
         if (blockStart.hour > h or (blockStart.hour == h and blockStart.minute >= m)) and (blockStart.hour < h2 or (blockStart.hour == h2 and blockStart.minute < m2)):
             bias += 0.5
             break
+
+    # if blockStart.hour<eventStart.hour+1 and  blockStart.hour>eventStart.hour-1:
+    #     bias += 0.5
     return 0.5+bias
     # whiteList = whiteList - blockStart
     # blackList = blackList - blockStart
@@ -208,48 +212,56 @@ def listPrinter(L):
 
 
 def showBlockTime(startTime, index, windowSize):
-    print(startTime+datetime.timedelta(hours=index))
-    print(startTime+datetime.timedelta(hours=index+windowSize))
+    s1 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index),'%Y-%m-%d %H:%M:%S')
+    s2 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index+windowSize),'%Y-%m-%d %H:%M:%S')
+    return [s1,s2]
 
 
-def getTime():
-    userId = ""
-    eventId = ""
-    whiteList = np.array(["06:00 12:00", "16:00 18:00"])
-    blackList = np.array(["00:00 06:00"])
-    whiteList = np.char.split(whiteList)
-    blackList = np.char.split(blackList)
-    # AHPPreference = (db_user.find_one({"userId": userId}))["AHPPreference"]
-    # participants = (db_user.find_one({"eventId": eventId}))["participants"]
-    AHPPreference = [0.9, 0.05, 0.05]
-    participants = ["user1"]
+def getTime(userId,eventId,whiteList,blackList):
+    eventObj=db_currentEvent.find_one({"eventId":eventId})
+    eventStart = eventObj["startTime"]
+    eventEnd = eventObj["endTime"]
+    lat=eventObj["latitude"]
+    lon=eventObj["longitude"]
+
+    data2=Write_3Days(lat,lon)
+    data7=Write_3_To_7Days(lat,lon)
+
+    whiteList = np.array(whiteList)
+    blackList = np.array(blackList)
+    if len(whiteList)!=0:
+        whiteList = np.char.split(whiteList)
+    if len(blackList)!=0:
+        blackList = np.char.split(blackList)
+
+    AHPPreference = (db_user.find_one({"userId": userId}))["AHPPreference"]
+    participants = (db_currentEvent.find_one({"eventId": eventId}))["participants"]
     #------------------------------------------------------------------------------------------------------------#
+    # print("eventStart",eventStart)
+    # print("eventEnd",eventEnd)
+    # print("AHPPreference",AHPPreference)
+    # print("participants",participants)
     list1 = []
     list2 = []
     list3 = []
 
-    createTable()
-    # print(table)
+    createTable(data2,data7)
+    print(table)
 
-    eventStart = datetime.datetime.strptime("2021-01-10 00:00", "%Y-%m-%d %H:%M")
-    eventEnd = datetime.datetime.strptime("2021-01-10 05:00", "%Y-%m-%d %H:%M")
     windowSize = eventEnd-eventStart
     windowSize = windowSize.days*24 + windowSize.seconds/3600
 
-    blockStart = datetime.datetime.strptime("2021-04-29 18:00", "%Y-%m-%d %H:%M")  # 起始要改成now
+    blockStart = datetime.datetime.now()  # 起始要改成now
     initblockStart = blockStart
     blockEnd = blockStart+datetime.timedelta(hours=windowSize)
     # cutBlock(blockStart, blockEnd)
-    while blockEnd <= datetime.datetime.strptime("2021-05-07 06:00", "%Y-%m-%d %H:%M"):  # 終止條件要改成API7的最後一個時間
+    terminal = datetime.datetime.strptime(data7["temperature"][-1]["time"],"%Y-%m-%d %H:%M:%S")
+    terminal += datetime.timedelta(hours=12)
+    while blockEnd <= terminal:  # 終止條件要改成API7的最後一個時間
         resultList = divideBlock(blockStart, blockEnd)
-        # for i in resultList:
-        #     print("----------------------")
-        #     print(i["blockStart"])
-        #     print(i["blockEnd"])
-        #     print("----------------------")
-        list1.append(judgeByWeather(resultList))
+        list1.append(judgeByWeather(resultList,data2))
         list2.append(judgeByReserve(resultList, windowSize, participants))
-        list3.append(judgeByRationality(blockStart, whiteList, blackList))
+        list3.append(judgeByRationality(blockStart, whiteList, blackList,eventStart))
         blockStart += datetime.timedelta(hours=1)
         blockEnd += datetime.timedelta(hours=1)
 
@@ -264,6 +276,12 @@ def getTime():
     result = calculate(list1, list2, list3, AHPPreference)
     print("評分結果: ")
     listPrinter(result)
-    showBlockTime(initblockStart, 5, windowSize)
-#     return 
-# getTime()
+    
+    max_number = result.argsort()[-3:]
+    finalList = []
+    for i in max_number:
+        finalList+=showBlockTime(initblockStart, int(i), windowSize)
+    print(finalList)
+    return finalList
+# if __name__=="__main__":
+#     getTime()

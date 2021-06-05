@@ -27,7 +27,7 @@ from Data.GetWeatherIcon import GetWeatherIcon
 from Profile.ViewProfile import ViewProfile
 from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
-
+from Recommendation.GetRecommendTime import GetRecommendTime
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -49,7 +49,7 @@ app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
 # app.register_blueprint(RecommendEvent)
 app.register_blueprint(recommend)
-# app.register_blueprint(getRecommendTime)
+app.register_blueprint(GetRecommendTime)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
