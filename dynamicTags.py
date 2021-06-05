@@ -48,28 +48,28 @@ for j in years:
                             if (target.get(i).get('最低氣溫(C)')<=10):
                                 new_tag.get(i).get('dynamicTags').append('寒冷(黃燈)')
 
-            if type(target.get(i).get('日最高紫外線指數'))==float:
+            if target.get(i).get('日最高紫外線指數')!=None:
                 if(target.get(i).get('日最高紫外線指數')>=8):
                     new_tag.get(i).get('dynamicTags').append('強紫外線')
         
-            if type(target.get(i).get('相對溼度(%)'))==float:
+            if target.get(i).get('相對溼度(%)')!=None:
                 if(target.get(i).get('相對溼度(%)')>=70):
                     new_tag.get(i).get('dynamicTags').append('潮濕')
 
-            if type(target.get(i).get('最小相對溼度(%)'))==float:
+            if target.get(i).get('最小相對溼度(%)')!=None:
                 if(target.get(i).get('最小相對溼度(%)')<=40):
                     new_tag.get(i).get('dynamicTags').append('乾燥')
 
-            if type(target.get(i).get('最大陣風(m/s)'))==float:
+            if target.get(i).get('最大陣風(m/s)')!=None:
                 if(target.get(i).get('最大陣風(m/s)')>=10.8):
                     new_tag.get(i).get('dynamicTags').append('強風')
             last2High=lastHigh
-            if(type(target.get(i).get('最高氣溫(C)'))==float):
+            if target.get(i).get('最高氣溫(C)')!=None:
                 lastHigh=target.get(i).get('最高氣溫(C)')
             else:
                 lastHigh=20
             last2Low=lastLow
-            if(type(target.get(i).get('最低氣溫(C)'))==float):
+            if target.get(i).get('最低氣溫(C)')!=None:
                 lastLow=target.get(i).get('最低氣溫(C)')
             else:
                 lastLow=20
