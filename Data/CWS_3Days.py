@@ -8,7 +8,7 @@ from Data.Tag3DaysCreater import districtTagCreater,globalTagCreater,mergeTag,ad
 def Get_3Days_Data():
     time_start=time.time()
     count=0
-    url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-061?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"
+    url="https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-061?Authorization=CWB-D55ED7A7-56DD-4C73-964D-E61FACF6E5FE"#台北的網址
     Data2 = requests.get(url)
     globalAll=json.loads(Data2.text)#把json變成dictionary
     for i in range(len(globalAll["records"]["locations"][0]["location"])):
@@ -176,5 +176,5 @@ def WriteData(result):
     # file = 'CWS_2Days.json'
     # with open(file, 'w',encoding='utf8') as obj:
     #     json.dump(result, obj, ensure_ascii=False)#把結果寫入CWS.json檔
-if __name__ =='__main__':
-    Get_3Days_Data()
+# if __name__ =='__main__':
+#     Get_3Days_Data()

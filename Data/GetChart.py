@@ -10,7 +10,6 @@ from Data.HistoryMinDistance import HistoryMinDistance,WriteHistory
 import schedule
 import threading
 GetChart=Blueprint("GetChart", __name__)
-
 @GetChart.route('/getChart')
 def getData():
     time_start=time.time()

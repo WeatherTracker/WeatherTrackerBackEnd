@@ -4,6 +4,7 @@ from setup import get_event,getUser
 from datetime import datetime
 import uuid
 from Verification.TokenGenerator import decode_token
+from Event.eventTag import timeSegment
 AddEvent=Blueprint("AddEvent", __name__)
 @AddEvent.route("/newEvent",methods=['Post'])
 def create():
@@ -12,11 +13,13 @@ def create():
         event["eventId"]=str(uuid.uuid4())
     except Exception as e:
         return jsonify({"msg":str(uuid.uuid4())})
+    
+    event["participants"]=[]
+
+    event["dynamicTag"]=timeSegment(event["startTime"],event["endTime"],float(event["latitude"]),float(event["longitude"]))
+    event["suggestion"]=[]
     event["startTime"]=datetime.strptime(event["startTime"], "%Y-%m-%d %H:%M")
     event["endTime"]=datetime.strptime(event["endTime"], "%Y-%m-%d %H:%M")
-    event["participants"]=[]
-    event["dynamicTag"]=[]
-    event["suggestion"]=[]
     eventDb=get_event()
     userDb=getUser()
     hosts=[]

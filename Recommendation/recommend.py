@@ -1,7 +1,7 @@
 import json
 from flask_pymongo import pymongo
 from flask import jsonify,request,Blueprint
-from Recommendation.RecommendPoint import nearest_ViewPoint
+from Recommendation.recommendPoint import nearest_ViewPoint
 recommend = Blueprint('recommend',__name__)
 @recommend.route('/recommendScene')
 def recommandScene():
