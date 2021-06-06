@@ -29,6 +29,8 @@ from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
+from notification.Inform import Inform
+from Event.updateTag import updateTag
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -51,6 +53,7 @@ app.register_blueprint(ViewProfile)
 # app.register_blueprint(RecommendEvent)
 app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
+app.register_blueprint(Inform)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -67,6 +70,8 @@ def job5_task():
     threading.Thread(target=weatherDataUpdater).start()
 def job6_task():
     threading.Thread(target=updatePoint).start()
+def job7_task():
+    threading.Thread(target=updateTag).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -116,6 +121,13 @@ class Config(object):
             'func':'__main__:job6_task',
             'trigger':'interval',
             'start_date':'2021-06-05 18:17:00',
+            'days':1
+        },
+        {
+            'id':'job7',
+            'func':'__main__:job7_task',
+            'trigger':'interval',
+            'start_date':'2021-06-06 14:04:00',
             'days':1
         }
     ]
