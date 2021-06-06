@@ -70,8 +70,8 @@ from pymongo import MongoClient
 def updateStationList(year):
     ############################################ 記得修改 ##########################################
     client = MongoClient('localhost', 27017)
-    db = client['test']
-    collect = db['stationListTest']
+    db = client['calculated']
+    collect = db['Station_list']
     ############################################ 記得修改 ##########################################
     today = datetime.datetime.today()
     targetURL = "https://e-service.cwb.gov.tw/wdps/obs/state.htm"

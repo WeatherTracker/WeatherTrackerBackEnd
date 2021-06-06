@@ -281,7 +281,7 @@ def getTime(userId,eventId,whiteList,blackList):
     finalList = []
     for i in max_number:
         finalList+=showBlockTime(initblockStart, int(i), windowSize)
-    print(finalList)
+    # print(finalList)
     return finalList
 # if __name__=="__main__":
 #     getTime()
