@@ -5,12 +5,19 @@ from flask import jsonify,request,Blueprint
 from itsdangerous import TimedJSONWebSignatureSerializer
 from Recommendation.recommendPoint import nearest_ViewPoint
 from Recommendation.recommendEvent import hobby_event
+from Recommendation.SearchEvent import search_event
 recommend = Blueprint('recommend',__name__)
 @recommend.route('/recommendScene')
 def recommandScene():
     y=request.args["longitude"]
     x=request.args["latitude"]
     return jsonify(nearest_ViewPoint(x,y))
+@recommend.route('/searchEvent')
+def searchEvent():
+    keyword=request.args["input"]
+    result=search_event(keyword)
+    print(result)
+    return jsonify(result)
 @recommend.route('/recommendEvent',methods=['POST'])
 def recommandEvent():
     targetUserToken=request.form.get("token")

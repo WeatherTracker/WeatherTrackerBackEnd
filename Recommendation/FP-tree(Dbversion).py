@@ -1,15 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-#variables:
-#name of the node, a count
-#nodelink used to link similar items
-#parent vaiable used to refer to the parent of the node in the tree
-#node contains an empty dictionary for the children in the node
-#from itertools import combinations
+from pymongo import MongoClient
 import time
 class treeNode:
     def __init__(self, nameValue, numOccur, parentNode):
@@ -27,7 +16,7 @@ class treeNode:
         for child in self.children.values():
             child.disp(ind+1)
 
-def createTree(dataSet, minSup=1):#create FP-tree from dataset but don't mine
+def createTree(dataSet, minSup=10):#create FP-tree from dataset but don't mine
     headerTable = {}
     #go over dataSet twice
     for trans in dataSet:#first pass counts frequency of occurance
@@ -119,7 +108,7 @@ def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
             #myCondTree.disp()
             mineTree(myCondTree, myHead, minSup, newFreqSet,freqItemList)
             
-def fpGrowth(dataSet, minSup=30):
+def fpGrowth(dataSet, minSup=2):
     initSet = createInitSet(dataSet)
     #print(initSet)
     myFPtree, myHeaderTab = createTree(initSet, minSup)
@@ -129,10 +118,14 @@ def fpGrowth(dataSet, minSup=30):
     return freqItems
 def loadFileDat():
     fileDat = []
-    with open('tags2.dat','r',encoding="utf-8") as fp:
-        for line in fp :
-            lineDat = line.split(' ')
-            fileDat.append(lineDat[:-1])
+    client = MongoClient("localhost", 27017)
+    availableEvent=client.event.pastEvent.find()
+    for i in availableEvent:
+        FPnode=[]
+        FPnode.append(i.get('staticHobbyTag'))
+        tags=i.get('dynamicTag')
+        FPnode=FPnode+tags
+        fileDat.append(FPnode)
     return fileDat
 a=time.time()
 freqItems = []
@@ -142,10 +135,18 @@ b=time.time()
 print('處理程序耗時: {} 秒'.format(b-a))
 print("total freqItemSet that item<5: ",len(freqItems))
 sum=[0,0,0,0,0]
+hobbyList=["健行","賞鳥","散步","旅遊","賽車","開車兜風","騎單車",'網球','羽球','博弈','桌球',"聚餐","釣魚",
+"游泳","水上活動","拖曳傘","撞球","保齡球","棒球","籃球","高爾夫球","排球","打拳","靜坐","有氧","健身","瑜珈","登山"
+,"健行","慢跑","跑步","彈奏樂器","舞蹈","攝影","書法","藝文展覽","表演欣賞","手工藝","閱讀","園藝","上網","電競","桌遊"
+"益智遊戲","密室逃脫","博弈","電視","錄影帶","電影","KTV","聽音樂","泡湯","SPA","按摩","遊樂園","娛樂中心","逛街購物",
+"下午茶","禮拜","團康","親子活動","打掃","睡覺","做家事"]
 for i in freqItems:
     sum[len(i)-1]+=1
-    #print (i)
-#print("1~5items freqItemSet count: ",sum)
+    s2=set(hobbyList)
+    s1=set(i)
+    if(s1&s2 and len(i)>1):
+        print(s1)
+print("1~5items freqItemSet count: ",sum)
 
 
 # In[ ]:
