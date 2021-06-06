@@ -10,7 +10,6 @@ from Data.HistoryMinDistance import HistoryMinDistance,WriteHistory
 import schedule
 import threading
 GetChart=Blueprint("GetChart", __name__)
-
 @GetChart.route('/getChart')
 def getData():
     time_start=time.time()
@@ -25,7 +24,7 @@ def getData():
     if ask<today:
         print("history")
         history=WriteHistory(TimeData,now_lat,now_lon)
-        return "history"
+        return jsonify(history)
     elif ask<after_3days:
         print("in 3 Days")
         data_3Days=Write_3Days(now_lat,now_lon)

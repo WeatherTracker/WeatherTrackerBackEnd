@@ -67,11 +67,11 @@ from pymongo import MongoClient
 #         f.write(json.dumps(final_data, ensure_ascii=False))
 
 
-def updateStationList():
+def updateStationList(year):
     ############################################ 記得修改 ##########################################
     client = MongoClient('localhost', 27017)
-    db = client['test']
-    collect = db['stationListTest']
+    db = client['calculated']
+    collect = db['Station_list']
     ############################################ 記得修改 ##########################################
     today = datetime.datetime.today()
     targetURL = "https://e-service.cwb.gov.tw/wdps/obs/state.htm"
@@ -81,38 +81,38 @@ def updateStationList():
         root = BeautifulSoup(responseData, "html.parser")
 
     titleList = ["站號", "站名", "海拔高度(m)", "經度", "緯度", "城市", "地址", "資料起始日期", "撤站日期"]
-    for year in range(1999, 2022):  # 資料庫建立好後就不需要for loop了，改為用datetime驅動更新這一天當年的那份doc
-        rows = iter(root.find('table', class_="download_html_table black_table table-condensed").find_all('tr'))
-        # skip first row
-        next(rows)
-        datas = []
-        for row in rows:
-            data = {}
-            if row.select('td:nth-of-type(1)')[0].text[:2] != "C1" and int(row.select('td:nth-of-type(8)')[0].text[:4]) <= year:
-                count = 0
-                for cell in row.find_all('td'):
-                    index = count % 12
-                    count += 1
-                    if index > 8:
-                        continue
-                    elif index < 8:
-                        if index == 2 or index == 3 or index == 4:
-                            data[titleList[index]] = float(cell.string)
-                        elif index == 7:
-                            data[titleList[index]] = datetime.datetime.strptime(cell.string, "%Y/%m/%d")
-                        else:
-                            data[titleList[index]] = cell.string
+    # for year in range(1999, 2022):  # 資料庫建立好後就不需要for loop了，改為用datetime驅動更新這一天當年的那份doc
+    rows = iter(root.find('table', class_="download_html_table black_table table-condensed").find_all('tr'))
+    # skip first row
+    next(rows)
+    datas = []
+    for row in rows:
+        data = {}
+        if row.select('td:nth-of-type(1)')[0].text[:2] != "C1" and int(row.select('td:nth-of-type(8)')[0].text[:4]) <= year:
+            count = 0
+            for cell in row.find_all('td'):
+                index = count % 12
+                count += 1
+                if index > 8:
+                    continue
+                elif index < 8:
+                    if index == 2 or index == 3 or index == 4:
+                        data[titleList[index]] = float(cell.string)
+                    elif index == 7:
+                        data[titleList[index]] = datetime.datetime.strptime(cell.string, "%Y/%m/%d")
                     else:
-                        if cell.string == None:
-                            data[titleList[index]] = None
-                        else:
-                            data[titleList[index]] = cell.string
-                if data["站名"] == "五分山雷達站" or data["站名"] == "墾丁雷達站":
-                    print("跳過", data["站名"])
+                        data[titleList[index]] = cell.string
                 else:
-                    datas.append(data)
-        collect.update_one({"year": year}, {"$set": {"datas": datas}}, True)
+                    if cell.string == None:
+                        data[titleList[index]] = None
+                    else:
+                        data[titleList[index]] = cell.string
+            if data["站名"] == "五分山雷達站" or data["站名"] == "墾丁雷達站":
+                print("跳過", data["站名"])
+            else:
+                datas.append(data)
+    collect.update_one({"year": year}, {"$set": {"datas": datas}}, True)
 
 
-if __name__ == "__main__":
-    updateStationList()
+# if __name__ == "__main__":
+#     updateStationList()

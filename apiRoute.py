@@ -3,12 +3,14 @@ import smtplib
 import json
 import datetime
 import uuid
+from datetime import timedelta
+import threading
 from flask_jwt_extended import JWTManager
 from flask_apscheduler import APScheduler
-from Verification.login import login
 from setup import create_app
 from setup import get_calculated,get_event
 from flask import Flask, request, render_template,Blueprint
+from Verification.login import login
 from Event.updateEvent import updateEvent
 from Event.AddEvent import AddEvent
 from Event.GetCalendarMonth import GetCalendarMonth
@@ -16,10 +18,7 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
-# from Recommendation.scheduleV2 import
 from Recommendation.recommend import recommend
-# from Recommendation.RecommendPoint import nearest_ViewPoint
-import threading
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
@@ -27,7 +26,11 @@ from Data.PM2_5 import Get_PM2_5Data
 from Data.GetWeatherIcon import GetWeatherIcon
 from Profile.ViewProfile import ViewProfile
 from Profile.EditProfile import EditProfile
-from datetime import timedelta
+from crawlerModel.updater2 import weatherDataUpdater
+from Recommendation.GetRecommendTime import GetRecommendTime
+from Recommendation.updatePoint import updatePoint
+from notification.Inform import Inform
+from Event.updateTag import updateTag
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = 'FISTBRO'
@@ -49,6 +52,8 @@ app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
 # app.register_blueprint(RecommendEvent)
 app.register_blueprint(recommend)
+app.register_blueprint(GetRecommendTime)
+app.register_blueprint(Inform)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -61,8 +66,12 @@ def job3_task():
     threading.Thread(target=Get_PM2_5Data).start()
 def job4_task():
     threading.Thread(target=updateEvent).start()
-# def job5_task():
-#     threading.Thread(target=updateEvent).start()
+def job5_task():
+    threading.Thread(target=weatherDataUpdater).start()
+def job6_task():
+    threading.Thread(target=updatePoint).start()
+def job7_task():
+    threading.Thread(target=updateTag).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -72,7 +81,7 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-05-24 23:37:00',
+            # 'start_date':'2021-06-05 12:50:00',
             # 'minutes':1
         },
         {
@@ -81,7 +90,7 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-05-24 23:37:00',
+            # 'start_date':'2021-06-05 12:50:00',
             # 'minutes':1
         },
         {
@@ -100,13 +109,27 @@ class Config(object):
             'start_date':'2021-05-30 00:00:00',
             'days':1
         },
-        #  {
-        #     'id':'job5',
-        #     'func':'__main__:job5_task',
-        #     'trigger':'interval',
-        #     'start_date':'2021-06-04 00:00:00',
-        #     'days':1
-        # }
+        {
+            'id':'job5',
+            'func':'__main__:job5_task',
+            'trigger':'interval',
+            'start_date':'2021-06-06 06:00:00',
+            'days':1
+        },
+        {
+            'id':'job6',
+            'func':'__main__:job6_task',
+            'trigger':'interval',
+            'start_date':'2021-06-05 18:17:00',
+            'days':1
+        },
+        {
+            'id':'job7',
+            'func':'__main__:job7_task',
+            'trigger':'interval',
+            'start_date':'2021-06-06 14:04:00',
+            'days':1
+        }
     ]
 @app.route('/')
 def index():
