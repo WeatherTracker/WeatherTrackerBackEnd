@@ -176,8 +176,8 @@ def mergeTag(data):#這邊還有 大陸冷氣團/寒冷(橘燈) 的問題
         tag.append("下雨")
     hot=["炎熱(黃燈)","炎熱(橘燈)","炎熱(紅燈)"]
     cold=["大陸冷氣團","強烈大陸冷氣團","寒冷(黃燈)","寒冷(橘燈)","寒冷(紅燈)"]
-    UV_tag=["中量級(黃燈)","高量級(橘燈)","過量級(紅燈)","危險級(紫燈)"]
-    AQI_tag=["對敏感族群不健康(橘燈)","對所有族群不健康(紅燈)","非常不健康(紫燈)","危害(黑燈)"]
+    UV_tag=["紫外線:中量級(黃燈)","紫外線:高量級(橘燈)","紫外線:過量級(紅燈)","紫外線:危險級(紫燈)"]
+    AQI_tag=["AQI:對敏感族群不健康(橘燈)","AQI:對所有族群不健康(紅燈)","AQI:非常不健康(紫燈)","AQI:危害(黑燈)"]
     hotIndex=0
     coldIndex=0
     UVIndex=0
@@ -206,24 +206,24 @@ def mergeTag(data):#這邊還有 大陸冷氣團/寒冷(橘燈) 的問題
         tag.append("乾燥")
     if "潮濕" in data["humidity"]:
         tag.append("潮濕")
-    if "中量級(黃燈)" in data["UV"]:
+    if "紫外線:中量級(黃燈)" in data["UV"]:
         UVIndex=1
-    if "高量級(橘燈)" in data["UV"]:
+    if "紫外線:高量級(橘燈)" in data["UV"]:
         UVIndex=2
-    if "過量級(紅燈)" in data["UV"]:
+    if "紫外線:過量級(紅燈)" in data["UV"]:
         UVIndex=3
-    if "危險級(紫燈)" in data["UV"]:
+    if "紫外線:危險級(紫燈)" in data["UV"]:
         UVIndex=4
     if UVIndex!=0:
         tag.append(UV_tag[UVIndex-1])
     if "AQI" in data:
-        if "對敏感族群不健康(橘燈)" in data["AQI"]:
+        if "AQI:對敏感族群不健康(橘燈)" in data["AQI"]:
             AQIIndex=1
-        if "對所有族群不健康(紅燈)" in data["AQI"]:
+        if "AQI:對所有族群不健康(紅燈)" in data["AQI"]:
             AQIIndex=2
-        if "非常不健康(紫燈)" in data["AQI"]:
+        if "AQI:非常不健康(紫燈)" in data["AQI"]:
             AQIIndex=3
-        if "危害(黑燈)" in data["AQI"]:
+        if "AQI:危害(黑燈)" in data["AQI"]:
             AQIIndex=4
         if AQIIndex!=0:
             tag.append(AQI_tag[AQIIndex-1])
@@ -236,7 +236,7 @@ def timeSegment(startTime,endTime,latitude,longitude):
     now=datetime.datetime.now()
     Days3=now+datetime.timedelta(days=3)
     Days7=now+datetime.timedelta(days=7)
-    print(Days3,Days7)
+    # print(Days3,Days7)
     tag3={}
     tag7={}
     if endTime>=now and startTime<Days3:

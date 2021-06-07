@@ -10,7 +10,8 @@ def hobby_event(staticTag,lon,lat):
     recommendEvent=eventDb.currentEvent.find({"staticHobbyTag":staticTag,"isPublic":True})
     for i in recommendEvent:
         i.pop("_id")
-        print(i)
+        i["startTime"]=i.get("startTime").strftime("%Y-%m-%d %H:%M")
+        i["endTime"]=i.get("endTime").strftime("%Y-%m-%d %H:%M")
         recommendEventList.append(i)
     recommendEventList.sort(key=lambda s: pow((s.get("longitude")-float(lon)),2)+pow((s.get("latitude")-float(lat)),2))
     return recommendEventList

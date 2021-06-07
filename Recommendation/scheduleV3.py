@@ -212,8 +212,8 @@ def listPrinter(L):
 
 
 def showBlockTime(startTime, index, windowSize):
-    s1 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index),'%Y-%m-%d %H:%M:%S')
-    s2 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index+windowSize),'%Y-%m-%d %H:%M:%S')
+    s1 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index),'%Y-%m-%d %H:%M')
+    s2 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index+windowSize),'%Y-%m-%d %H:%M')
     return [s1,s2]
 
 
