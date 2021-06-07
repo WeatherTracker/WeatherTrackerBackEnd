@@ -39,7 +39,7 @@ def create():
     try:
         eventDb.currentEvent.insert_one(event)
     except:
-        return jsonify({"code":404,"msg":"Database failed to add event."})
+        return jsonify({"code":404,"msg":"新增活動失敗"})
     eventId=event["eventId"]
     for i in range(len(hosts)):
         userId= hosts[i]
@@ -48,4 +48,4 @@ def create():
             currentEvents=user["currentEvents"]
             currentEvents.append(eventId)
             userDb.auth.update_one({"userId":userId},{"$set":{"currentEvents":currentEvents}})
-    return jsonify({"code":200,"msg":"Database add event successful."})
+    return jsonify({"code":200,"msg":"新增活動成功"})

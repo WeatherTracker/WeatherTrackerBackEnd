@@ -123,8 +123,11 @@ def judgeByWeather(resultList,data2):
     # print("sum", sum)
     # print("tagsSum", total)
     # print("天氣好: ", (total - sum) / total * 100)
-    return (total - sum) / total * 100
-
+    try:
+        result=(total - sum) / total * 100
+        return result
+    except:
+        return 0
 
 def judgeByReserve(resultList, windowSize, participants):
     users = db_user.find({"userId": {"$in": participants}})

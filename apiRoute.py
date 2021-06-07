@@ -29,7 +29,6 @@ from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
-from notification.Inform import Inform
 from Event.updateTag import updateTag
 app = create_app()
 jwt = JWTManager()
@@ -52,7 +51,6 @@ app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
 app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
-app.register_blueprint(Inform)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
