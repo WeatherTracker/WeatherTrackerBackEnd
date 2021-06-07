@@ -24,7 +24,7 @@ def suggest(staticTag,dynamic):
         participantRemain=add.join(participant)
         hostRemain=add.join(host)
         resultObj.update({"all":allRemain,"participant":participantRemain,"host":hostRemain})
-        print(resultObj)
+        # print(resultObj)
         return resultObj
 # tag=timeSegment("2021-06-05 12:30:00","2021-06-12 21:00:00",25.1505447,121.7735869)
 # suggest("戶外",tag)

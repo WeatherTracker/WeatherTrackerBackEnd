@@ -29,7 +29,6 @@ from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
-from notification.Inform import Inform
 from Event.updateTag import updateTag
 app = create_app()
 jwt = JWTManager()
@@ -50,85 +49,83 @@ app.register_blueprint(GetWeatherIcon)
 app.register_blueprint(InOrOutEvent)
 app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
-# app.register_blueprint(RecommendEvent)
 app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
-app.register_blueprint(Inform)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
 
-def job1_task():
+def job1_task():#更新中央氣象局3天資料
     threading.Thread(target=Get_3Days_Data).start()
-def job2_task():
+def job2_task():#更新中央氣象局7天資料
     threading.Thread(target=Get_7Days_Data).start()
-def job3_task():
+def job3_task():#更新環保署AQI資料
     threading.Thread(target=Get_PM2_5Data).start()
-def job4_task():
+def job4_task():#把歷史的currentEvent送進去pastEvent
     threading.Thread(target=updateEvent).start()
-def job5_task():
+def job5_task():#更新中央氣象局的歷史資料
     threading.Thread(target=weatherDataUpdater).start()
-def job6_task():
+def job6_task():#更新景點API的資料
     threading.Thread(target=updatePoint).start()
-def job7_task():
+def job7_task():#每6小時更新活動的標籤
     threading.Thread(target=updateTag).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
         {
-            'id':'job1',
+            'id':'job1',#更新中央氣象局3天資料
             'func':'__main__:job1_task',
             'trigger':'interval',
             'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-06-05 12:50:00',
-            # 'minutes':1
+            # 'start_date':'2021-06-07 10:32:00',
+            # 'hours':6
         },
         {
-            'id':'job2',
+            'id':'job2',#更新中央氣象局7天資料
             'func':'__main__:job2_task',
             'trigger':'interval',
             'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-06-05 12:50:00',
-            # 'minutes':1
+            # 'start_date':'2021-06-07 10:32:00',
+            # 'hours':6
         },
         {
-            'id':'job3',
+            'id':'job3',#更新環保署AQI資料
             'func':'__main__:job3_task',
             'trigger':'interval',
             'start_date':'2021-05-25 10:35:00',
             'hours':6
-            # 'start_date':'2021-05-22 16:37:00',
-            # 'minutes':1
+            # 'start_date':'2021-06-07 10:32:00',
+            # 'hours':6
         },
         {
-            'id':'job4',
+            'id':'job4',#把歷史的currentEvent送進去pastEvent
             'func':'__main__:job4_task',
             'trigger':'interval',
             'start_date':'2021-05-30 00:00:00',
             'days':1
         },
         {
-            'id':'job5',
+            'id':'job5',#更新中央氣象局的歷史資料
             'func':'__main__:job5_task',
             'trigger':'interval',
-            'start_date':'2021-06-06 06:00:00',
+            'start_date':'2021-06-07 12:00:00',
             'days':1
         },
         {
-            'id':'job6',
+            'id':'job6',#更新景點API的資料
             'func':'__main__:job6_task',
             'trigger':'interval',
             'start_date':'2021-06-05 18:17:00',
             'days':1
         },
         {
-            'id':'job7',
+            'id':'job7',#每6小時更新活動的標籤
             'func':'__main__:job7_task',
             'trigger':'interval',
-            'start_date':'2021-06-06 14:04:00',
-            'days':1
+            'start_date':'2021-06-07 12:03:00',
+            'hours':6
         }
     ]
 @app.route('/')

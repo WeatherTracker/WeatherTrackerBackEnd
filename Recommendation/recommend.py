@@ -20,7 +20,7 @@ def searchEvent():
     return jsonify(result)
 @recommend.route('/recommendEvent',methods=['POST'])
 def recommandEvent():
-    targetUserToken=request.form.get("token")
+    targetUserToken=request.form.get("userId")
     s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
     token=targetUserToken.split('\'')[1] 
     data = s.loads(token)
