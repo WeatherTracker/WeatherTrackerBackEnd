@@ -35,11 +35,11 @@ def participate():
             user=userDb.auth.find_one({"userId":userId})
             currentEvents=user["currentEvents"]
             userDb.auth.update_one({"userId":userId},{"$push":{"currentEvents":eventId}})
-            return jsonify({"code":200,"msg":"Participate in activities successful."})
+            return jsonify({"code":200,"msg":"參加活動成功"})
         except:
-            return jsonify({"code":404,"msg":"Participate in activities False!!!"})
+            return jsonify({"code":404,"msg":"參加活動成功"})
     if action=="true" and (identity=="participant" or identity=="host"):
-        return jsonify({"code":404,"msg":"You had participated in this activities"})
+        return jsonify({"code":404,"msg":"你已經參加過這個活動了"})
     if action=="false":
         try:
             event=eventDb.currentEvent.find_one({"eventId":eventId})
@@ -47,6 +47,6 @@ def participate():
             participants.remove(userId)
             eventDb.currentEvent.update_one({"eventId":eventId},{"$set":{"participants":participants}})
             userDb.auth.update({ "userId":userId},{ "$pull": { "currentEvents":eventId } })
-            return jsonify({"code":200,"msg":"Exit event successful."})
+            return jsonify({"code":200,"msg":"離開這個活動成功"})
         except:
-            return jsonify({"code":404,"msg":"Exit event False!!!"})
+            return jsonify({"code":404,"msg":"離開這個活動失敗"})

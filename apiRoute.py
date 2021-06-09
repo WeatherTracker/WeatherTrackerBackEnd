@@ -105,6 +105,8 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-30 00:00:00',
             'days':1
+            # 'start_date':'2021-06-09 08:18:00',
+            # 'minutes':1
         },
         {
             'id':'job5',#更新中央氣象局的歷史資料
@@ -117,7 +119,7 @@ class Config(object):
             'id':'job6',#更新景點API的資料
             'func':'__main__:job6_task',
             'trigger':'interval',
-            'start_date':'2021-06-05 18:17:00',
+            'start_date':'2021-06-10 02:00:00',
             'days':1
         },
         {
@@ -126,6 +128,9 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-06-07 12:03:00',
             'hours':6
+            # 'start_date':'2021-06-09 08:13:00',
+            # 'minutes':1
+            
         }
     ]
 @app.route('/')

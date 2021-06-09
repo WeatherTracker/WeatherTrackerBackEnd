@@ -2,7 +2,6 @@ from pymongo import MongoClient#讀取MongoDB資料庫中的文件
 from setup import get_event
 from Event.eventTag import timeSegment
 from Event.suggest import suggest
-import datetime
 from datetime import datetime
 from notification.Inform import informAll
 def updateTag():
@@ -11,8 +10,8 @@ def updateTag():
     allEventObj=eventDb.currentEvent.find({"endTime":{"$gte":now}})
     for event in allEventObj:
         # timeSegment("2021-06-05 12:30:00","2021-06-06 21:00:00",25.1505447,121.7735869)
-        event["startTime"]=datetime.datetime.strftime(event["startTime"],"%Y-%m-%d %H:%M")
-        event["endTime"]=datetime.datetime.strftime(event["endTime"],"%Y-%m-%d %H:%M")
+        event["startTime"]=datetime.strftime(event["startTime"],"%Y-%m-%d %H:%M")
+        event["endTime"]=datetime.strftime(event["endTime"],"%Y-%m-%d %H:%M")
         oldDynamicTag=event["dynamicTags"]
         event["dynamicTags"]=timeSegment(event["startTime"],event["endTime"],event["latitude"],event["longitude"])
         if event["isOutDoor"]==True:

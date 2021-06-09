@@ -25,22 +25,22 @@ def getDate():
     date=set()
     user.pop("_id")
     print(user)
-    if user["pastEvents"]!=None:
+    if len(user["pastEvents"])!=0:
         pastEvents=user["pastEvents"]
-        for i in range(len(pastEvents)):
-            pastEventObj=eventDb.pastEvent.find_one({"eventId":pastEvents[i]})
-            startTemp=pastEventObj["startTime"]
-            endTemp=pastEventObj["endTime"]
+        pastEventObjs = eventDb.pastEvent.find({"eventId":{"$in":pastEvents}})
+        for event in pastEventObjs:
+            startTemp=event["startTime"]
+            endTemp=event["endTime"]
             while startTemp<=endTemp:
                 if startTemp>=start and startTemp<=end:
                     date.add(startTemp.strftime("%Y-%m-%d"))
                 startTemp=startTemp+timedelta(days=1)
-    if user["currentEvents"]!=None:
+    if len(user["currentEvents"])!=0:
         currentEvents=user["currentEvents"]
-        for i in range(len(currentEvents)):
-            currentEventObj=eventDb.currentEvent.find_one({"eventId":currentEvents[i]})
-            startTemp=currentEventObj["startTime"]
-            endTemp=currentEventObj["endTime"]
+        currentEventObjs = eventDb.currentEvent.find({"eventId":{"$in":currentEvents}})
+        for event in currentEventObjs:
+            startTemp=event["startTime"]
+            endTemp=event["endTime"]
             while startTemp<=endTemp:
                 if startTemp>=start and startTemp<=end:
                     date.add(startTemp.strftime("%Y-%m-%d"))

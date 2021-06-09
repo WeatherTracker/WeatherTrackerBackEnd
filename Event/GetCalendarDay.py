@@ -18,8 +18,9 @@ def getDay():
     user=userDb.auth.find_one({"userId":userId})
     ask=datetime.datetime.strptime(day,"%Y-%m-%d").date()
     today = datetime.date.today()
+    result=[]
     if ask>=today:
-        if user["currentEvents"]!=None:
+        if len(user["currentEvents"])!=0:
             event=user["currentEvents"]
             start=datetime.datetime.strptime(day, "%Y-%m-%d")
             end=start+datetime.timedelta(days=1)
@@ -28,7 +29,7 @@ def getDay():
                 eventobj=eventDb.currentEvent.find_one({"eventId":event[i]})
                 startTime=eventobj["startTime"]
                 endTime=eventobj["endTime"]
-                if (endTime>=start and endTime<=end) or (startTime>=start and startTime<=end) or (startTime<=start and endTime>=end):
+                if (endTime>=start and endTime<=end) or (startTime>=start and startTime<=end) or (startTime<=start and endTime>=start):
                     startTime=datetime.datetime.strftime(eventobj["startTime"], "%Y-%m-%d %H:%M:%S")
                     eventobj["startTime"]=startTime[:-3]
                     endTime=datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M:%S")
@@ -40,7 +41,7 @@ def getDay():
                     eventobj.pop("_id")
                     result.append(eventobj)
     else:
-        if user["pastEvents"]!=None:
+        if len(user["pastEvents"])!=0:
             event=user["pastEvents"]
             start=datetime.datetime.strptime(day, "%Y-%m-%d")
             end=start+datetime.timedelta(days=1)
