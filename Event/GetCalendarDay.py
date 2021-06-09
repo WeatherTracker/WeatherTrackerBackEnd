@@ -20,7 +20,6 @@ def getDay():
     today = datetime.date.today()
     result=[]
 
-    
     if ask>=today:
         if len(user["currentEvents"])!=0:
             event=user["currentEvents"]
