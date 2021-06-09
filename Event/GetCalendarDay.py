@@ -19,6 +19,8 @@ def getDay():
     ask=datetime.datetime.strptime(day,"%Y-%m-%d").date()
     today = datetime.date.today()
     result=[]
+
+    
     if ask>=today:
         if len(user["currentEvents"])!=0:
             event=user["currentEvents"]
