@@ -78,7 +78,7 @@ class Config(object):
             'trigger':'interval',
             'start_date':'2021-05-25 06:00:00',
             'hours':6
-            # 'start_date':'2021-06-07 10:32:00',
+            # 'start_date':'2021-06-09 10:03:00',
             # 'hours':6
         },
         {
@@ -126,10 +126,10 @@ class Config(object):
             'id':'job7',#每6小時更新活動的標籤
             'func':'__main__:job7_task',
             'trigger':'interval',
-            'start_date':'2021-06-07 12:03:00',
-            'hours':6
-            # 'start_date':'2021-06-09 08:13:00',
-            # 'minutes':1
+            # 'start_date':'2021-06-07 12:03:00',
+            # 'hours':6
+            'start_date':'2021-06-10 11:21:00',
+            'minutes':30
             
         }
     ]
