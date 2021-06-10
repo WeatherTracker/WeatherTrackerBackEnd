@@ -47,6 +47,6 @@ def participate():
             participants.remove(userId)
             eventDb.currentEvent.update_one({"eventId":eventId},{"$set":{"participants":participants}})
             userDb.auth.update({ "userId":userId},{ "$pull": { "currentEvents":eventId } })
-            return jsonify({"code":200,"msg":"離開這個活動成功"})
+            return jsonify({"code":200,"msg":"離開活動成功"})
         except:
-            return jsonify({"code":404,"msg":"離開這個活動失敗"})
+            return jsonify({"code":404,"msg":"離開活動失敗"})

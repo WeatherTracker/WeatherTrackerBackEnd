@@ -14,12 +14,14 @@ def updateTag():
         event["endTime"]=datetime.strftime(event["endTime"],"%Y-%m-%d %H:%M")
         oldDynamicTag=event["dynamicTags"]
         event["dynamicTags"]=timeSegment(event["startTime"],event["endTime"],event["latitude"],event["longitude"])
+        print(event["eventName"])
+        print(event["dynamicTags"])
         if event["isOutDoor"]==True:
             staticTag="戶外"
         else:
             staticTag="室內"
         event["suggestions"]=suggest(staticTag,event["dynamicTags"])
-        eventDb.currentEvent.update_one({"eventId":event["eventId"]},{"$set":{"dynamicTags":event["dynamicTags"],"suggestions":event["suggestions"]}})
+        eventDb.currentEvent.update({"eventId":event["eventId"]},{"$set":{"dynamicTags":event["dynamicTags"],"suggestions":event["suggestions"]}})
         if len(event["dynamicTags"])>len(oldDynamicTag):
             informAll(event["eventId"],event["eventName"],"這個活動天氣變壞了")
     print("更新所有活動的 eventTags 成功!!!")
