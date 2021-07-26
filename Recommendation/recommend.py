@@ -6,12 +6,18 @@ from itsdangerous import TimedJSONWebSignatureSerializer
 from Recommendation.recommendPoint import nearest_ViewPoint
 from Recommendation.recommendEvent import hobby_event
 from Recommendation.SearchEvent import search_event
+from Recommendation.FPtree_Dbversion import fp_recommendList
 recommend = Blueprint('recommend',__name__)
 @recommend.route('/recommendScene')
 def recommandScene():
     y=request.args["longitude"]
     x=request.args["latitude"]
     return jsonify(nearest_ViewPoint(x,y))
+@recommend.route('/FPRecommendEvent')
+def fprecommandEvent():
+    y=request.args["longitude"]
+    x=request.args["latitude"]
+    return jsonify(fp_recommendList(x,y))
 @recommend.route('/searchEvent')
 def searchEvent():
     keyword=request.args["input"]
