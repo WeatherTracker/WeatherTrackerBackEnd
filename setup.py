@@ -3,7 +3,7 @@ from pymongo import MongoClient
 app = Flask(__name__)
 client = MongoClient("localhost", 27017)  # 連線到 localhost:27017
 calculated = client.calculated
-serverIP="http:140.121.197.130:5603"
+serverIP="https://b0db8975d97d.ngrok.io"
 #"http:140.121.197.130:5603"
 station=client.station
 user=client.user

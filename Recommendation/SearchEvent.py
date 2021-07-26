@@ -22,14 +22,17 @@ def search_event(keyWord):
                 searchResult.append(k)
     for i in recommendEvent:
         if(fuzz.partial_ratio(keyWord, i.get("eventName"))>=50):
-            i['ratio']=fuzz.partial_ratio(keyWord, i.get("eventName"))
-            if not (i in searchResult):
+            if i not in searchResult:
+                i['ratio']=fuzz.partial_ratio(keyWord, i.get("eventName"))
                 searchResult.append(i)
-    #searchResult.sort(key=lambda s: s.get('ratio'))
+    uniqueResult=[] 
+    searchResult.sort(key=lambda s: s.get('ratio'))
     for i in searchResult:
         i.pop("ratio")
         i.pop("_id")
         i["startTime"]=i.get("startTime").strftime("%Y-%m-%d %H:%M")
         i["endTime"]=i.get("endTime").strftime("%Y-%m-%d %H:%M")
-    print(searchResult)
-    return searchResult 
+        if i not in uniqueResult:
+            uniqueResult.append(i)
+    print(uniqueResult)
+    return uniqueResult

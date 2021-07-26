@@ -76,28 +76,28 @@ class Config(object):
             'id':'job1',#更新中央氣象局3天資料
             'func':'__main__:job1_task',
             'trigger':'interval',
-            'start_date':'2021-05-25 06:00:00',
+            #'start_date':'2021-05-25 06:00:00',
+            # 'hours':6,
+            'start_date':'2021-06-08 00:00:00',
             'hours':6
-            # 'start_date':'2021-06-09 10:03:00',
-            # 'hours':6
         },
         {
             'id':'job2',#更新中央氣象局7天資料
             'func':'__main__:job2_task',
             'trigger':'interval',
-            'start_date':'2021-05-25 06:00:00',
+            #'start_date':'2021-05-25 06:00:00',
+            # 'hours':6,
+            'start_date':'2021-06-08 00:00:00',
             'hours':6
-            # 'start_date':'2021-06-07 10:32:00',
-            # 'hours':6
         },
         {
             'id':'job3',#更新環保署AQI資料
             'func':'__main__:job3_task',
             'trigger':'interval',
-            'start_date':'2021-05-25 10:35:00',
+            #'start_date':'2021-05-25 10:35:00',
+            # 'hours':6,
+            'start_date':'2021-06-08 00:00:00',
             'hours':6
-            # 'start_date':'2021-06-07 10:32:00',
-            # 'hours':6
         },
         {
             'id':'job4',#把歷史的currentEvent送進去pastEvent

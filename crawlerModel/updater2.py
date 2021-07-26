@@ -99,7 +99,7 @@ def weatherDataUpdater():
     
 if __name__=="__main__":
     start = datetime.datetime(2021, 6, 4)
-    end = datetime.datetime(2021, 6, 5)
+    end = datetime.datetime(2021, 6, 7)
     t1 = time.time()
     while start <= end:
         print(start)
