@@ -1,5 +1,8 @@
 from pymongo import MongoClient
 import time
+import collections
+import datetime
+import math
 class treeNode:
     def __init__(self, nameValue, numOccur, parentNode):
         self.name = nameValue
@@ -16,7 +19,7 @@ class treeNode:
         for child in self.children.values():
             child.disp(ind+1)
 
-def createTree(dataSet, minSup=10):#create FP-tree from dataset but don't mine
+def createTree(dataSet, minSup=1):#create FP-tree from dataset but don't mine
     headerTable = {}
     #go over dataSet twice
     for trans in dataSet:#first pass counts frequency of occurance
@@ -66,7 +69,9 @@ def updateHeader(nodeToTest, targetNode):   #this version does not use recursion
 def createInitSet(dataSet):
     retDict = {}
     for trans in dataSet:
-        retDict[frozenset(trans)] = 1
+        retDict[frozenset(trans)] = 0
+    for trans in dataSet:
+        retDict[frozenset(trans)] +=1
     return retDict
 
 def ascendTree(leafNode, prefixPath): #ascends from leaf node to root
@@ -108,9 +113,9 @@ def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
             #myCondTree.disp()
             mineTree(myCondTree, myHead, minSup, newFreqSet,freqItemList)
             
-def fpGrowth(dataSet, minSup=2):
+def fpGrowth(dataSet, minSup=10):
     initSet = createInitSet(dataSet)
-    #print(initSet)
+
     myFPtree, myHeaderTab = createTree(initSet, minSup)
     freqItems = []
     #asociationlist=[]
@@ -123,46 +128,74 @@ def loadFileDat():
     for i in availableEvent:
         FPnode=[]
         FPnode.append(i.get('staticHobbyTag'))
-        tags=i.get('dynamicTag')
+        tags=i.get('dynamicTags')
         FPnode=FPnode+tags
+        #FPnode.append(tags)
         fileDat.append(FPnode)
     return fileDat
-a=time.time()
-freqItems = []
-dataSet = loadFileDat()
-freqItems = fpGrowth(dataSet)
-b=time.time()
-print('處理程序耗時: {} 秒'.format(b-a))
-print("total freqItemSet that item<5: ",len(freqItems))
-sum=[0,0,0,0,0]
-hobbyList=["健行","賞鳥","散步","旅遊","賽車","開車兜風","騎單車",'網球','羽球','博弈','桌球',"聚餐","釣魚",
-"游泳","水上活動","拖曳傘","撞球","保齡球","棒球","籃球","高爾夫球","排球","打拳","靜坐","有氧","健身","瑜珈","登山"
-,"健行","慢跑","跑步","彈奏樂器","舞蹈","攝影","書法","藝文展覽","表演欣賞","手工藝","閱讀","園藝","上網","電競","桌遊"
-"益智遊戲","密室逃脫","博弈","電視","錄影帶","電影","KTV","聽音樂","泡湯","SPA","按摩","遊樂園","娛樂中心","逛街購物",
-"下午茶","禮拜","團康","親子活動","打掃","睡覺","做家事"]
-for i in freqItems:
-    sum[len(i)-1]+=1
-    s2=set(hobbyList)
-    s1=set(i)
-    if(s1&s2 and len(i)>1):
-        print(s1)
-print("1~5items freqItemSet count: ",sum)
+def fp_recommend(dynamicTagList):
+    a=time.time()
+    freqItems = []
+    dataSet = loadFileDat()
+    freqItems = fpGrowth(dataSet)
+    b=time.time()
+    print('處理程序耗時: {} 秒'.format(b-a))
+    print("total freqItemSet that item<5: ",len(freqItems))
+    sum=[0,0,0,0,0]
+    hobbyList=["健行","賞鳥","散步","旅遊","賽車","開車兜風","騎單車",'網球','羽球','博弈','桌球',"聚餐","釣魚",
+    "游泳","水上活動","拖曳傘","撞球","保齡球","棒球","籃球","高爾夫球","排球","打拳","靜坐","有氧","健身","瑜珈","登山"
+    ,"健行","慢跑","跑步","彈奏樂器","舞蹈","攝影","書法","藝文展覽","表演欣賞","手工藝","閱讀","園藝","上網","電競","桌遊"
+    "益智遊戲","密室逃脫","博弈","電視","錄影帶","電影","KTV","聽音樂","泡湯","SPA","按摩","遊樂園","娛樂中心","逛街購物",
+    "下午茶","禮拜","團康","親子活動","打掃","睡覺","做家事"]
+    freqItems.reverse()
+    freqItems=sorted(freqItems, reverse=True,key= len)
+    recommendlist=[]
+    for i in freqItems:
+        s2=set(hobbyList)
+        s1=set(i)
+        if(s1&s2 and len(i)>=1):
+            sum[len(i)-1]+=1
+            s1copy=s1.copy()
+            staticTag=""
+            for j in s1:
+                if (j in s2):
+                    s1copy.remove(j)
+                    staticTag=j
+            if(collections.Counter(s1copy)==collections.Counter(dynamicTagList)):
+                recommendlist.append(staticTag)
+    return recommendlist
+                
+def fp_recommendList(lat,lon):
+    recommendEventList7day=[]
+    recommendEventList=[]
+    client = MongoClient("localhost", 27017)
+    #locationData=client.station.CWB_3Days.find_one({'city':city})
+    #every3hourData=locationData.get('locations').get(location).get('times_3HR_point')
+    currentEventList=client.event.currentEvent.find()
+    #for i in every3hourData:
+    #    tags=[]
+    #    data=i.get('data')
+    #    for j in data:
+    #        if(j.get('tag')):
+    #            tags.append(j.get('tag'))
+    #    if(len(tags)>0):
+    #        recommendTypes=fp_recommend(tags)
+    #        print(recommendTypes)
+    #    dataTime=i.get('dataTime')
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+    for i in currentEventList:
+        startTimeLeft=(i.get('startTime')-datetime.datetime.today()).total_seconds()
+        if(startTimeLeft<604800 and len(i.get('dynamicTags'))>0):
+            tags=i.get('dynamicTags')
+            recommendTypeList=fp_recommend(tags)
+            print(recommendTypeList)
+            if(i.get('staticHobbyTag')in recommendTypeList):
+                i['recommendLevel']=recommendTypeList.index(i.get('staticHobbyTag'))+1
+                recommendEventList.append(i)
+    recommendEventList.sort(key=lambda x: abs(float(lat)-x.get("latitude"))**(2)+abs(float(lon)-x.get("longitude"))**(2))
+    recommendEventList.sort(key=lambda x: x.get('recommendLevel'))
+    for i in recommendEventList:
+        i.pop('recommendLevel')
+        i.pop("_id")
+    
+    return recommendEventList
