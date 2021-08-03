@@ -13,7 +13,7 @@ from flask_jwt_extended import JWTManager,create_access_token,jwt_required, crea
 from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
 from flask.json import jsonify
-from setup import get_calculated,getUser
+from setup import get_calculated,getUser,get_key
 login = Blueprint('login',__name__,template_folder="templates")
 @login.route('/123')
 def flask_mongodb_atlas():
@@ -21,8 +21,8 @@ def flask_mongodb_atlas():
 @login.route('/verify',methods=['GET'])
 def tryMe():
     token=request.args['token']
-    decoded = jwt.decode(token, 'FISTBRO', algorithms=['HS512'])
-    s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
+    decoded = jwt.decode(token, get_key().get('secretKey'), algorithms=['HS512'])
+    s = TimedJSONWebSignatureSerializer(get_key().get('secretKey'), expires_in=600)
     try:
         data = s.loads(token)  # 驗證
         email=data.get('email')
@@ -30,7 +30,7 @@ def tryMe():
             session[str(token)]=email
             session.permanent = True
             hashed=data.get('hash_password').split('\'')
-            passwordbit=des_decrypt("FIST2021",hashed[1])
+            passwordbit=des_decrypt(get_key().get('jwtKey'),hashed[1])
             password=str(passwordbit).split('\'')
             FCMToken=data.get('FCMToken')
             user=getUser()
@@ -87,6 +87,44 @@ def reprofile():
             "msg":"修改完成"
             }
             
+@login.route('/googleSignUp',methods=['POST'])
+def googleSignUp():
+    email=request.form['email']
+    FCMToken=request.form['FCMToken']
+    user=getUser()
+    if(user.googleAuth.find_one({'email':email})):
+        ack={"code":200,
+            "msg":"這個email已經註冊過了"
+            }
+        return ack
+    else:
+        userId=str(uuid.uuid4())
+        user.googleAuth.update(
+            {"email" : email},
+            {"$set":{
+            'FCMToken':FCMToken,
+            'userId':userId,
+            'userName':"user",
+            'pastEvents':[],
+            'AHPPreference':[0.33,0.33,0.33],
+            'hobbies':[],
+            'freeTime':[
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [False, False, False],
+                [True, True, True],
+                [True, True, True]
+            ],
+            'barValue':[0.0,0.0,0.0],
+            'currentEvents':[]
+            }
+            },upsert=True)
+        ack={"code":200,
+        "msg":"註冊成功"
+        }
+        return ack
 @login.route('/signUp',methods=['GET', 'POST'])
 def register():
     target=request.form['email']
@@ -123,7 +161,23 @@ def signIn():
             "msg":"帳號或密碼錯誤"
         }
         return ack
-
+@login.route('/googleSignIn',methods=['POST'])
+def googleSignIn():
+    user=getUser()
+    email=request.form['email']
+    FCMToken=request.form['FCMToken']
+    if(user.googleAuth.find_one({'email':email,})):
+        userId=user.googleAuth.find_one({'email':email}).get("userId")
+        token=create_user_token(userId)
+        ack={"code":200,
+            "msg":str(token)
+        }
+        return ack
+    else:
+        ack={"code":400,
+            "msg":"帳號或密碼錯誤"
+        }
+        return ack
 @login.route('/sendResetMail',methods=['POST'])
 def sendResetMail():
     if request.method == 'POST':
@@ -144,7 +198,7 @@ def passwordForm():
 def newpassword():
     if request.method == 'POST':
         mail=request.form.get('mail')       
-        s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=600)
+        s = TimedJSONWebSignatureSerializer(get_key().get('secretKey'), expires_in=600)
         try:
             data = s.loads(mail)  # 驗證
             email=data.get('email')
@@ -152,7 +206,7 @@ def newpassword():
                 user=getUser()
                 session[mail]=email
                 print(email)
-                email=str(des_decrypt("FIST2021",email.split('\'')[1]))
+                email=str(des_decrypt(get_key().get('jwtKey'),email.split('\'')[1]))
                 print(email.split('\'')[1])
                 session.permanent = True
                 password=(request.form.get('password'))

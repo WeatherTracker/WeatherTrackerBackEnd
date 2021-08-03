@@ -8,7 +8,7 @@ import threading
 from flask_jwt_extended import JWTManager
 from flask_apscheduler import APScheduler
 from setup import create_app
-from setup import get_calculated,get_event
+from setup import get_calculated,get_event,get_key
 from flask import Flask, request, render_template,Blueprint
 from Verification.login import login
 from Event.updateEvent import updateEvent
@@ -33,8 +33,8 @@ from notification.Inform import Inform
 from Event.updateTag import updateTag
 app = create_app()
 jwt = JWTManager()
-app.config['JWT_SECRET_KEY'] = 'FISTBRO'
-app.config['SECRET_KEY'] = 'FISTBRO'
+app.config['JWT_SECRET_KEY'] = get_key().get('secretKey')
+app.config['SECRET_KEY'] = get_key().get('secretKey')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 jwt.init_app(app)
 app.config['JWT_TOKEN_LOCATION'] = ['headers','query_string']

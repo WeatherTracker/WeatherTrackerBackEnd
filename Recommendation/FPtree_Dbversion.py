@@ -72,6 +72,7 @@ def createInitSet(dataSet):
         retDict[frozenset(trans)] = 0
     for trans in dataSet:
         retDict[frozenset(trans)] +=1
+    print(retDict)
     return retDict
 
 def ascendTree(leafNode, prefixPath): #ascends from leaf node to root
@@ -199,3 +200,5 @@ def fp_recommendList(lat,lon):
         i.pop("_id")
     
     return recommendEventList
+
+print(fp_recommend(['炎熱(紅燈)']))
