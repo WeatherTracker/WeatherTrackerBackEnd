@@ -167,10 +167,11 @@ def signIn():
 @login.route('/googleSignIn',methods=['POST'])
 def googleSignIn():
     user=getUser()
-    email=request.form['email']
+    encodedEmail=request.form['email']
+    email=base64.b64decode(base64.b64decode(encodedEmail))
     FCMToken=request.form['FCMToken']
-    if(user.googleAuth.find_one({'email':email,})):
-        userId=user.googleAuth.find_one({'email':email}).get("userId")
+    if(user.auth.find_one({'email':email,})):
+        userId=user.auth.find_one({'email':email}).get("userId")
         token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)
