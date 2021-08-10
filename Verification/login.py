@@ -42,7 +42,7 @@ def tryMe():
             "password":password[1],
             'FCMToken':FCMToken,
             'userId':userId,
-            'userName':"user",
+            'userName':"user"+str(user.auth.find().count()),
             'pastEvents':[],
             'AHPPreference':[0.33,0.33,0.33],
             'hobbies':[],
@@ -107,7 +107,7 @@ def googleSignUp():
             {"$set":{
             'FCMToken':FCMToken,
             'userId':userId,
-            'userName':"user",
+            'userName':"user"+str(user.auth.find().count()),
             'pastEvents':[],
             'AHPPreference':[0.33,0.33,0.33],
             'hobbies':[],
