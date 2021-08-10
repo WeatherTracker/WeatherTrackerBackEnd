@@ -150,8 +150,7 @@ def register():
 @login.route('/signIn',methods=['POST'])
 def signIn():
     user=getUser()
-    encodedEmail=request.form['email']
-    email=base64.b64decode(base64.b64decode(encodedEmail))
+    email=request.form['email']
     password=request.form['password']
     FCMToken=request.form['FCMToken']
     if(user.auth.find_one({'email':email,'password':password})):
