@@ -91,7 +91,7 @@ def reprofile():
 @login.route('/googleSignUp',methods=['POST'])
 def googleSignUp():
     encodedEmail=request.form['email']
-    email=base64.b64decode(base64.b64decode(encodedEmail))
+    email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
     FCMToken=request.form['FCMToken']
     user=getUser()
     if(user.auth.find_one({'email':email})):
@@ -168,7 +168,7 @@ def signIn():
 def googleSignIn():
     user=getUser()
     encodedEmail=request.form['email']
-    email=base64.b64decode(base64.b64decode(encodedEmail))
+    email=email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
     FCMToken=request.form['FCMToken']
     if(user.auth.find_one({'email':email,})):
         userId=user.auth.find_one({'email':email}).get("userId")
