@@ -101,6 +101,7 @@ def googleSignUp():
         return ack
     else:
         userId=str(uuid.uuid4())
+        token=create_user_token(userId)
         user.auth.update(
             {"email" : email},
             {"$set":{
@@ -124,7 +125,7 @@ def googleSignUp():
             }
             },upsert=True)
         ack={"code":200,
-        "msg":"註冊成功"
+        "msg":str(token)
         }
         return ack
 @login.route('/signUp',methods=['GET', 'POST'])
