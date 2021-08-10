@@ -201,4 +201,4 @@ def fp_recommendList(lat,lon):
     
     return recommendEventList
 
-print(fp_recommend(['炎熱(紅燈)']))
+print(fp_recommend(['潮濕']))

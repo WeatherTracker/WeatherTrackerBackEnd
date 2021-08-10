@@ -14,6 +14,7 @@ from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
 from flask.json import jsonify
 from setup import get_calculated,getUser,get_key
+import base64
 login = Blueprint('login',__name__,template_folder="templates")
 @login.route('/123')
 def flask_mongodb_atlas():
@@ -89,17 +90,18 @@ def reprofile():
             
 @login.route('/googleSignUp',methods=['POST'])
 def googleSignUp():
-    email=request.form['email']
+    encodedEmail=request.form['email']
+    email=base64.b64decode(base64.b64decode(encodedEmail))
     FCMToken=request.form['FCMToken']
     user=getUser()
-    if(user.googleAuth.find_one({'email':email})):
+    if(user.auth.find_one({'email':email})):
         ack={"code":200,
             "msg":"這個email已經註冊過了"
             }
         return ack
     else:
         userId=str(uuid.uuid4())
-        user.googleAuth.update(
+        user.auth.update(
             {"email" : email},
             {"$set":{
             'FCMToken':FCMToken,
@@ -147,7 +149,8 @@ def register():
 @login.route('/signIn',methods=['POST'])
 def signIn():
     user=getUser()
-    email=request.form['email']
+    encodedEmail=request.form['email']
+    email=base64.b64decode(base64.b64decode(encodedEmail))
     password=request.form['password']
     FCMToken=request.form['FCMToken']
     if(user.auth.find_one({'email':email,'password':password})):
@@ -169,10 +172,11 @@ def signIn():
 @login.route('/googleSignIn',methods=['POST'])
 def googleSignIn():
     user=getUser()
-    email=request.form['email']
+    encodedEmail=request.form['email']
+    email=base64.b64decode(base64.b64decode(encodedEmail))
     FCMToken=request.form['FCMToken']
-    if(user.googleAuth.find_one({'email':email,})):
-        userId=user.googleAuth.find_one({'email':email}).get("userId")
+    if(user.auth.find_one({'email':email,})):
+        userId=user.auth.find_one({'email':email}).get("userId")
         token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)
