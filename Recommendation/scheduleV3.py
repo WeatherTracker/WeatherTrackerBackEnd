@@ -58,6 +58,12 @@ def createTable(data2,data7):
                     row += 8 * [1]
                 else:
                     row += 8 * [0]
+        # elif k=="AQI":
+        #     for i in data2[k]:
+        #         if i["tag"] != None:
+        #             row += 8 * [1]
+        #         else:
+        #             row += 8 * [0]
         else:
             for i in data2[k]:
                 if i["tag"] != None:
@@ -115,6 +121,7 @@ def judgeByWeather(resultList,data2):
     for i in resultList:
         s = getBlockIndex(i["blockStart"],data2)
         e = getBlockIndex(i["blockEnd"],data2)
+
         total += (e-s+1)*7
         try:
             sum += table[e]-table[s-1]
@@ -123,8 +130,11 @@ def judgeByWeather(resultList,data2):
     # print("sum", sum)
     # print("tagsSum", total)
     # print("天氣好: ", (total - sum) / total * 100)
-    return (total - sum) / total * 100
-
+    try:
+        result=(total - sum) / total * 100
+        return result
+    except:
+        return 0
 
 def judgeByReserve(resultList, windowSize, participants):
     users = db_user.find({"userId": {"$in": participants}})
@@ -177,7 +187,7 @@ def judgeByRationality(blockStart, whiteList, blackList,eventStart):
 
     # if blockStart.hour<eventStart.hour+1 and  blockStart.hour>eventStart.hour-1:
     #     bias += 0.5
-    return 0.5+bias
+    return 0.3+bias
     # whiteList = whiteList - blockStart
     # blackList = blackList - blockStart
     # whiteMin = np.min(abs(whiteList))
@@ -212,8 +222,8 @@ def listPrinter(L):
 
 
 def showBlockTime(startTime, index, windowSize):
-    s1 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index),'%Y-%m-%d %H:%M:%S')
-    s2 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index+windowSize),'%Y-%m-%d %H:%M:%S')
+    s1 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index),'%Y-%m-%d %H:%M')
+    s2 = datetime.datetime.strftime(startTime+datetime.timedelta(hours=index+windowSize),'%Y-%m-%d %H:%M')
     return [s1,s2]
 
 
@@ -236,6 +246,7 @@ def getTime(userId,eventId,whiteList,blackList):
 
     AHPPreference = (db_user.find_one({"userId": userId}))["AHPPreference"]
     participants = (db_currentEvent.find_one({"eventId": eventId}))["participants"]
+    print(AHPPreference)
     #------------------------------------------------------------------------------------------------------------#
     # print("eventStart",eventStart)
     # print("eventEnd",eventEnd)

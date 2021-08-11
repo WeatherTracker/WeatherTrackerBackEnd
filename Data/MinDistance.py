@@ -125,6 +125,7 @@ def Write_3_To_7Days(now_lat,now_lon):
     return data_7Days
 def weatherIcon(now_lat,now_lon):
     result=CwsMinDistance(now_lat,now_lon)#傳回測站的地區和縣市
+    print(result)
     city=result[0]
     district=result[1]
     print(city+" "+district)

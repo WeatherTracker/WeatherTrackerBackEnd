@@ -14,18 +14,25 @@ def search_event(keyWord):
     recommendEvent=eventDb.currentEvent.find({"isPublic":True})
     searchResult=[]
     for j in hobbyList:
-        if(fuzz.ratio(j,keyWord))>=50:
+        if(fuzz.partial_ratio(j,keyWord))>=50:
             hobbyEvent=eventDb.currentEvent.find({"staticHobbyTag":j,"isPublic":True})
             for k in hobbyEvent:
+                print(k)
                 k['ratio']=fuzz.partial_ratio(keyWord,j)
                 searchResult.append(k)
     for i in recommendEvent:
         if(fuzz.partial_ratio(keyWord, i.get("eventName"))>=50):
-            i['ratio']=fuzz.partial_ratio(keyWord, i.get("eventName"))
-            searchResult.append(i)
+            if i not in searchResult:
+                i['ratio']=fuzz.partial_ratio(keyWord, i.get("eventName"))
+                searchResult.append(i)
+    uniqueResult=[] 
     searchResult.sort(key=lambda s: s.get('ratio'))
     for i in searchResult:
         i.pop("ratio")
         i.pop("_id")
-    print(searchResult)
-    return searchResult 
+        i["startTime"]=i.get("startTime").strftime("%Y-%m-%d %H:%M")
+        i["endTime"]=i.get("endTime").strftime("%Y-%m-%d %H:%M")
+        if i not in uniqueResult:
+            uniqueResult.append(i)
+    print(uniqueResult)
+    return uniqueResult

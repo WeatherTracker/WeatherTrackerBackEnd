@@ -154,11 +154,11 @@ def signIn():
     password=request.form['password']
     FCMToken=request.form['FCMToken']
     if(user.auth.find_one({'email':email,'password':password})):
-        userId=user.auth.find_one({'email':email,'password':password}).get("userId")
-        user.auth.update(
-            {"email" : email},
-            {"$set":{
-            'FCMToken':FCMToken,}})
+        targetUser = user.auth.find_one({'email':email,'password':password})
+        userId = targetUser.get("userId")
+        if FCMToken !="":
+            print("login and refresh fcm token")
+            user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)
@@ -178,11 +178,9 @@ def googleSignIn():
     if(user.auth.find_one({'email':email,})):
         userId=user.auth.find_one({'email':email}).get("userId")
         token=create_user_token(userId)
-        user.auth.update(
-            {"email" : email},
-            {"$set":{
-            'FCMToken':FCMToken,}})
-        token=create_user_token(userId)
+        if FCMToken !="":
+            print("login and refresh fcm token")
+            user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         ack={"code":200,
             "msg":str(token)
         }

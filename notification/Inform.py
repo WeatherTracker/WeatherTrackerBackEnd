@@ -4,9 +4,7 @@ import time
 import json
 from setup import get_event, get_station,getUser
 from notification.FCMTest import getFCMtoken
-Inform=Blueprint("Inform", __name__)
-@Inform.route('/inform/<string:eventId>')
-def informAll(eventId):
+def informAll(eventId,title,msg):
     userDb=getUser()
     eventDb=get_event()
     eventObj=eventDb.currentEvent.find_one({"eventId":eventId})
@@ -15,15 +13,12 @@ def informAll(eventId):
     eventAlluser=[]
     for i in range(len(hosts)):
         hostObject=userDb.auth.find_one({"userId":hosts[i]})
+        print("被通知的host的useId是",hostObject["userId"])
         hostFCM=hostObject["FCMToken"]
         eventAlluser.append(hostFCM)
     for i in range(len(participants)):
         participantsObject=userDb.auth.find_one({"userId":participants[i]})
+        print("被通知的participant的useId是",participantsObject["userId"])
         participantFCM=participantsObject["FCMToken"]
         eventAlluser.append(participantFCM)
-    try:
-        getFCMtoken(eventAlluser)
-        return jsonify({"code":200,"msg":"Send notifications successful."})
-    except:
-        return jsonify({"code":404,"msg":"Send notifications fail."})
-    # return jsonify(eventAlluser)
+    getFCMtoken(eventAlluser,title,msg)

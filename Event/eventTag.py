@@ -21,36 +21,91 @@ def tag7Days(startTime,endTime,latitude,longitude,Days3):
             if j==district:
                 flag=False
                 flagUV=False
-                for k in range(len(i["locations"][j]["times"])):
-                    judgeTime=i["locations"][j]["times"][k]["startTime"]
-                    if startTime<=judgeTime and judgeTime<=endTime and judgeTime>=Days3:
-                        if flag==False and k>0:# 抓取7天內的第1筆資料
-                            for s in range(len(i["locations"][j]["times"][k-1]["data"])):
-                                if "12小時降雨機率" in i["locations"][j]["times"][k-1]["data"][s]:
-                                    rain_12hr.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
-                                if "平均溫度" in i["locations"][j]["times"][k-1]["data"][s]:
-                                    temperature.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
-                                if "平均相對濕度" in i["locations"][j]["times"][k-1]["data"][s]:
-                                    humidity.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
-                                if "最大風速" in i["locations"][j]["times"][k-1]["data"][s]:
-                                    wind.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
-                                if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][s]:
-                                    UV.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
-                                    flagUV=True
-                            if flagUV==False and k>1:
-                                UV.append(i["locations"][j]["times"][k-2]["data"][9]["tag"])
-                            flag=True
-                        for s in range(len(i["locations"][j]["times"][k]["data"])):# 抓取7天內的資料
-                            if "12小時降雨機率" in i["locations"][j]["times"][k]["data"][s]:
-                                rain_12hr.append(i["locations"][j]["times"][k]["data"][s]["tag"])
-                            if "平均溫度" in i["locations"][j]["times"][k]["data"][s]:
-                                temperature.append(i["locations"][j]["times"][k]["data"][s]["tag"])
-                            if "平均相對濕度" in i["locations"][j]["times"][k]["data"][s]:
-                                humidity.append(i["locations"][j]["times"][k]["data"][s]["tag"])
-                            if "最大風速" in i["locations"][j]["times"][k]["data"][s]:
-                                wind.append(i["locations"][j]["times"][k]["data"][s]["tag"])
-                            if "紫外線指數" in i["locations"][j]["times"][k]["data"][s]:
-                                UV.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #新版的
+                isLowerTwelve=False
+                betweenJudgeTime=False
+                if startTime+ datetime.timedelta(hours = 12)>endTime:
+                    isLowerTwelve=True
+                if isLowerTwelve==True:
+                    for k in range(len(i["locations"][j]["times"])):
+                        judgeTime=i["locations"][j]["times"][k]["startTime"]
+                        if startTime>=judgeTime and endTime<=judgeTime+ datetime.timedelta(hours = 12) and judgeTime>=Days3:
+                            for s in range(len(i["locations"][j]["times"][k]["data"])):# 抓取7天內的資料
+                                if "12小時降雨機率" in i["locations"][j]["times"][k]["data"][s]:
+                                    rain_12hr.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "平均溫度" in i["locations"][j]["times"][k]["data"][s]:
+                                    temperature.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "平均相對濕度" in i["locations"][j]["times"][k]["data"][s]:
+                                    humidity.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "最大風速" in i["locations"][j]["times"][k]["data"][s]:
+                                    wind.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "紫外線指數" in i["locations"][j]["times"][k]["data"][s]:
+                                    UV.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                            betweenJudgeTime=True
+                            break
+                if isLowerTwelve==False and betweenJudgeTime==False:
+                    for k in range(len(i["locations"][j]["times"])):
+                        judgeTime=i["locations"][j]["times"][k]["startTime"]
+                        if startTime<=judgeTime and judgeTime<=endTime and judgeTime>=Days3:
+                            if flag==False and k>0:# 抓取7天內的第1筆資料
+                                for s in range(len(i["locations"][j]["times"][k-1]["data"])):
+                                    if "12小時降雨機率" in i["locations"][j]["times"][k-1]["data"][s]:
+                                        rain_12hr.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                                    if "平均溫度" in i["locations"][j]["times"][k-1]["data"][s]:
+                                        temperature.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                                    if "平均相對濕度" in i["locations"][j]["times"][k-1]["data"][s]:
+                                        humidity.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                                    if "最大風速" in i["locations"][j]["times"][k-1]["data"][s]:
+                                        wind.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                                    if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][s]:
+                                        UV.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                                        flagUV=True
+                                if flagUV==False and k>1:
+                                    UV.append(i["locations"][j]["times"][k-2]["data"][9]["tag"])
+                                flag=True
+                            for s in range(len(i["locations"][j]["times"][k]["data"])):# 抓取7天內的資料
+                                if "12小時降雨機率" in i["locations"][j]["times"][k]["data"][s]:
+                                    rain_12hr.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "平均溫度" in i["locations"][j]["times"][k]["data"][s]:
+                                    temperature.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "平均相對濕度" in i["locations"][j]["times"][k]["data"][s]:
+                                    humidity.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "最大風速" in i["locations"][j]["times"][k]["data"][s]:
+                                    wind.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                                if "紫外線指數" in i["locations"][j]["times"][k]["data"][s]:
+                                    UV.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #舊版的
+                
+                # for k in range(len(i["locations"][j]["times"])):
+                #     judgeTime=i["locations"][j]["times"][k]["startTime"]
+                #     if startTime<=judgeTime and judgeTime<=endTime and judgeTime>=Days3:
+                #         if flag==False and k>0:# 抓取7天內的第1筆資料
+                #             for s in range(len(i["locations"][j]["times"][k-1]["data"])):
+                #                 if "12小時降雨機率" in i["locations"][j]["times"][k-1]["data"][s]:
+                #                     rain_12hr.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                #                 if "平均溫度" in i["locations"][j]["times"][k-1]["data"][s]:
+                #                     temperature.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                #                 if "平均相對濕度" in i["locations"][j]["times"][k-1]["data"][s]:
+                #                     humidity.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                #                 if "最大風速" in i["locations"][j]["times"][k-1]["data"][s]:
+                #                     wind.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                #                 if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][s]:
+                #                     UV.append(i["locations"][j]["times"][k-1]["data"][s]["tag"])
+                #                     flagUV=True
+                #             if flagUV==False and k>1:
+                #                 UV.append(i["locations"][j]["times"][k-2]["data"][9]["tag"])
+                #             flag=True
+                #         for s in range(len(i["locations"][j]["times"][k]["data"])):# 抓取7天內的資料
+                #             if "12小時降雨機率" in i["locations"][j]["times"][k]["data"][s]:
+                #                 rain_12hr.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #             if "平均溫度" in i["locations"][j]["times"][k]["data"][s]:
+                #                 temperature.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #             if "平均相對濕度" in i["locations"][j]["times"][k]["data"][s]:
+                #                 humidity.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #             if "最大風速" in i["locations"][j]["times"][k]["data"][s]:
+                #                 wind.append(i["locations"][j]["times"][k]["data"][s]["tag"])
+                #             if "紫外線指數" in i["locations"][j]["times"][k]["data"][s]:
+                #                 UV.append(i["locations"][j]["times"][k]["data"][s]["tag"])
     data_7Days={}
     data_7Days.update({"POP":rain_12hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"UV":UV})
     return data_7Days
@@ -80,22 +135,53 @@ def tag3Days(startTime,endTime,latitude,longitude):
         i.pop("_id")
         for j in i["locations"]:
             if j==district:
+                #新版的
+                isLowerThree=False
+                betweenJudgeTime=False
+                if startTime+ datetime.timedelta(hours = 3)>endTime:
+                    isLowerThree=True
                 flag=False
-                flagUV=False
-                for k in range(0,6):
-                    judgeTime = i["locations"][j]["times"][k]["startTime"]
-                    if startTime<=judgeTime and judgeTime<=endTime:
-                        if flag==False:
-                            if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][9]:
-                                UV_dict=i["locations"][j]["times"][k-1]["data"]
+                if isLowerThree==True:
+                    for k in range(0,6):
+                        judgeTime = i["locations"][j]["times"][k]["startTime"]
+                        print("<3")
+                        if startTime>=judgeTime and endTime<=judgeTime+ datetime.timedelta(hours = 3):
+                            if "紫外線指數" in i["locations"][j]["times"][k]["data"][9]:
+                                UV_dict=i["locations"][j]["times"][k]["data"]
                                 UV.append(UV_dict[9]["tag"])
-                            if "紫外線指數" not in i["locations"][j]["times"][k-1]["data"][9] and k>1:
-                                UV_dict=i["locations"][j]["times"][k-2]["data"]
+                        betweenJudgeTime=True
+                        break
+                if isLowerThree==False and betweenJudgeTime==False:
+                    for k in range(0,6):
+                        judgeTime = i["locations"][j]["times"][k]["startTime"]
+                        if startTime<=judgeTime and judgeTime<=endTime:
+                            if flag==False:
+                                if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][9]:
+                                    UV_dict=i["locations"][j]["times"][k-1]["data"]
+                                    UV.append(UV_dict[9]["tag"])
+                                if "紫外線指數" not in i["locations"][j]["times"][k-1]["data"][9] and k>1:
+                                    UV_dict=i["locations"][j]["times"][k-2]["data"]
+                                    UV.append(UV_dict[9]["tag"])
+                                flag=True
+                            if "紫外線指數" in i["locations"][j]["times"][k]["data"][9]:
+                                UV_dict=i["locations"][j]["times"][k]["data"]
                                 UV.append(UV_dict[9]["tag"])
-                            flag=True
-                        if "紫外線指數" in i["locations"][j]["times"][k]["data"][9]:
-                            UV_dict=i["locations"][j]["times"][k]["data"]
-                            UV.append(UV_dict[9]["tag"])
+                # 舊版的
+                # flag=False
+                # for k in range(0,6):
+                #     judgeTime = i["locations"][j]["times"][k]["startTime"]
+                #     if startTime<=judgeTime and judgeTime<=endTime:
+                #         if flag==False:
+                #             if "紫外線指數" in i["locations"][j]["times"][k-1]["data"][9]:
+                #                 UV_dict=i["locations"][j]["times"][k-1]["data"]
+                #                 UV.append(UV_dict[9]["tag"])
+                #             if "紫外線指數" not in i["locations"][j]["times"][k-1]["data"][9] and k>1:
+                #                 UV_dict=i["locations"][j]["times"][k-2]["data"]
+                #                 UV.append(UV_dict[9]["tag"])
+                #             flag=True
+                #         if "紫外線指數" in i["locations"][j]["times"][k]["data"][9]:
+                #             UV_dict=i["locations"][j]["times"][k]["data"]
+                #             UV.append(UV_dict[9]["tag"])
     target_city=stationDb.CWB_3Days.find({"city": city})
     rain_6hr=[]
     temperature=[]
@@ -105,34 +191,89 @@ def tag3Days(startTime,endTime,latitude,longitude):
         i.pop("_id")
         for j in i["locations"]:
             if j==district:
-                flag=False
-                for k in range(len(i["locations"][j]["times_6HR"])):
-                    judgeTime = i["locations"][j]["times_6HR"][k]["startTime"]
-                    if startTime<=judgeTime and judgeTime<=endTime:
-                        if flag==False and k>0:
-                            rain_6hr.append(i["locations"][j]["times_6HR"][k-1]["data"][0]["tag"])
-                            flag=True
-                        rain_6hr.append(i["locations"][j]["times_6HR"][k]["data"][0]["tag"])
-                flag=False
-                for k in range(len(i["locations"][j]["times_3HR_point"])):
-                    judgeTime=i["locations"][j]["times_3HR_point"][k]["dataTime"]
-                    if startTime<=judgeTime and judgeTime<=endTime:
-                        if flag==False and k>0:
-                            for s in range(len(i["locations"][j]["times_3HR_point"][k-1]["data"])):
-                                if "溫度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
-                                    temperature.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
-                                if "相對濕度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
-                                    humidity.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
-                                if "風速" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
-                                    wind.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
-                            flag=True
-                        for s in range(len(i["locations"][j]["times_3HR_point"][k]["data"])):
-                            if "溫度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
-                                temperature.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
-                            if "相對濕度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
-                                humidity.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
-                            if "風速" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
-                                wind.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                #新版的
+                isLowerThree=False
+                betweenJudgeTime=False
+                if startTime+ datetime.timedelta(hours = 3)>endTime:
+                    isLowerThree=True
+                
+                if isLowerThree==True:
+                    for k in range(len(i["locations"][j]["times_6HR"])):
+                        judgeTime = i["locations"][j]["times_6HR"][k]["startTime"]
+                        if startTime>=judgeTime and endTime<=judgeTime+ datetime.timedelta(hours = 3):
+                            rain_6hr.append(i["locations"][j]["times_6HR"][k]["data"][0]["tag"])
+                            betweenJudgeTime=True
+                            break
+                    for k in range(len(i["locations"][j]["times_3HR_point"])):
+                        judgeTime=i["locations"][j]["times_3HR_point"][k]["dataTime"]
+                        if startTime>=judgeTime and endTime<=judgeTime+ datetime.timedelta(hours = 3):
+                            for s in range(len(i["locations"][j]["times_3HR_point"][k]["data"])):
+                                if "溫度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    temperature.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                                if "相對濕度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    humidity.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                                if "風速" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    wind.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                            break
+                
+                if isLowerThree==False and betweenJudgeTime==False:
+                    flag=False
+                    for k in range(len(i["locations"][j]["times_6HR"])):
+                        judgeTime = i["locations"][j]["times_6HR"][k]["startTime"]
+                        if startTime<=judgeTime and judgeTime<=endTime:
+                            if flag==False and k>0:
+                                rain_6hr.append(i["locations"][j]["times_6HR"][k-1]["data"][0]["tag"])
+                                flag=True
+                            rain_6hr.append(i["locations"][j]["times_6HR"][k]["data"][0]["tag"])
+                    flag=False
+                    for k in range(len(i["locations"][j]["times_3HR_point"])):
+                        judgeTime=i["locations"][j]["times_3HR_point"][k]["dataTime"]
+                        if startTime<=judgeTime and judgeTime<=endTime:
+                            if flag==False and k>0:
+                                for s in range(len(i["locations"][j]["times_3HR_point"][k-1]["data"])):
+                                    if "溫度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                                        temperature.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                                    if "相對濕度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                                        humidity.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                                    if "風速" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                                        wind.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                                flag=True
+                            for s in range(len(i["locations"][j]["times_3HR_point"][k]["data"])):
+                                if "溫度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    temperature.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                                if "相對濕度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    humidity.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                                if "風速" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                                    wind.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                #舊版的
+                # flag=False
+                # for k in range(len(i["locations"][j]["times_6HR"])):
+                #     judgeTime = i["locations"][j]["times_6HR"][k]["startTime"]
+                #     if startTime<=judgeTime and judgeTime<=endTime:
+                #         if flag==False and k>0:
+                #             rain_6hr.append(i["locations"][j]["times_6HR"][k-1]["data"][0]["tag"])
+                #             flag=True
+                #         rain_6hr.append(i["locations"][j]["times_6HR"][k]["data"][0]["tag"])
+                # flag=False
+                # for k in range(len(i["locations"][j]["times_3HR_point"])):
+                #     judgeTime=i["locations"][j]["times_3HR_point"][k]["dataTime"]
+                #     if startTime<=judgeTime and judgeTime<=endTime:
+                #         if flag==False and k>0:
+                #             for s in range(len(i["locations"][j]["times_3HR_point"][k-1]["data"])):
+                #                 if "溫度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                #                     temperature.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                #                 if "相對濕度" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                #                     humidity.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                #                 if "風速" in i["locations"][j]["times_3HR_point"][k-1]["data"][s]:
+                #                     wind.append(i["locations"][j]["times_3HR_point"][k-1]["data"][s]["tag"])
+                #             flag=True
+                #         for s in range(len(i["locations"][j]["times_3HR_point"][k]["data"])):
+                #             if "溫度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                #                 temperature.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                #             if "相對濕度" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                #                 humidity.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
+                #             if "風速" in i["locations"][j]["times_3HR_point"][k]["data"][s]:
+                #                 wind.append(i["locations"][j]["times_3HR_point"][k]["data"][s]["tag"])
     data_3Days={}
     data_3Days.update({"POP":rain_6hr,"temperature":temperature,"humidity":humidity,"windSpeed":wind,"AQI":AQI_data,"UV":UV})
     return data_3Days
@@ -176,8 +317,8 @@ def mergeTag(data):#這邊還有 大陸冷氣團/寒冷(橘燈) 的問題
         tag.append("下雨")
     hot=["炎熱(黃燈)","炎熱(橘燈)","炎熱(紅燈)"]
     cold=["大陸冷氣團","強烈大陸冷氣團","寒冷(黃燈)","寒冷(橘燈)","寒冷(紅燈)"]
-    UV_tag=["中量級(黃燈)","高量級(橘燈)","過量級(紅燈)","危險級(紫燈)"]
-    AQI_tag=["對敏感族群不健康(橘燈)","對所有族群不健康(紅燈)","非常不健康(紫燈)","危害(黑燈)"]
+    UV_tag=["紫外線:中量級(黃燈)","紫外線:高量級(橘燈)","紫外線:過量級(紅燈)","紫外線:危險級(紫燈)"]
+    AQI_tag=["AQI:對敏感族群不健康(橘燈)","AQI:對所有族群不健康(紅燈)","AQI:非常不健康(紫燈)","AQI:危害(黑燈)"]
     hotIndex=0
     coldIndex=0
     UVIndex=0
@@ -206,24 +347,24 @@ def mergeTag(data):#這邊還有 大陸冷氣團/寒冷(橘燈) 的問題
         tag.append("乾燥")
     if "潮濕" in data["humidity"]:
         tag.append("潮濕")
-    if "中量級(黃燈)" in data["UV"]:
+    if "紫外線:中量級(黃燈)" in data["UV"]:
         UVIndex=1
-    if "高量級(橘燈)" in data["UV"]:
+    if "紫外線:高量級(橘燈)" in data["UV"]:
         UVIndex=2
-    if "過量級(紅燈)" in data["UV"]:
+    if "紫外線:過量級(紅燈)" in data["UV"]:
         UVIndex=3
-    if "危險級(紫燈)" in data["UV"]:
+    if "紫外線:危險級(紫燈)" in data["UV"]:
         UVIndex=4
     if UVIndex!=0:
         tag.append(UV_tag[UVIndex-1])
     if "AQI" in data:
-        if "對敏感族群不健康(橘燈)" in data["AQI"]:
+        if "AQI:對敏感族群不健康(橘燈)" in data["AQI"]:
             AQIIndex=1
-        if "對所有族群不健康(紅燈)" in data["AQI"]:
+        if "AQI:對所有族群不健康(紅燈)" in data["AQI"]:
             AQIIndex=2
-        if "非常不健康(紫燈)" in data["AQI"]:
+        if "AQI:非常不健康(紫燈)" in data["AQI"]:
             AQIIndex=3
-        if "危害(黑燈)" in data["AQI"]:
+        if "AQI:危害(黑燈)" in data["AQI"]:
             AQIIndex=4
         if AQIIndex!=0:
             tag.append(AQI_tag[AQIIndex-1])
@@ -236,13 +377,14 @@ def timeSegment(startTime,endTime,latitude,longitude):
     now=datetime.datetime.now()
     Days3=now+datetime.timedelta(days=3)
     Days7=now+datetime.timedelta(days=7)
-    print(Days3,Days7)
+    # print(Days3,Days7)
     tag3={}
     tag7={}
     if endTime>=now and startTime<Days3:
         tag3=tag3Days(startTime,endTime,latitude,longitude)
         # print(tag3)
     if startTime<=Days7 and endTime>=Days3:
+        print("7")
         tag7=tag7Days(startTime,endTime,latitude,longitude,Days3)
         # print(tag7)
     result=mergeSet(tag3,tag7)

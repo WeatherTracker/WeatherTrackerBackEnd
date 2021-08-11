@@ -21,5 +21,5 @@ def edit():
     try:
         userDb.auth.update_one({"userId":userId},{"$set":{"userName":userName,"AHPPreference":AHPPreference,"freeTime":freeTime,"hobbies":hobbies,"barValue":barValue}})
     except:
-        return jsonify({"code":404,"msg":"Database failed to edit profile."})
-    return jsonify({"code":200,"msg":"Database edit profile successful."})
+        return jsonify({"code":404,"msg":"個人資料修改失敗"})
+    return jsonify({"code":200,"msg":"個人資料修改成功"})

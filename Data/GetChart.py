@@ -1,4 +1,4 @@
-from flask import request,Blueprint,jsonify
+from flask import request,Blueprint,jsonify,abort
 from pymongo import MongoClient#讀取MongoDB資料庫中的文件
 import datetime
 import time
@@ -23,8 +23,8 @@ def getData():
     after_7days = today +datetime.timedelta(days = 7)
     if ask<today:
         print("history")
-        history=WriteHistory(TimeData,now_lat,now_lon)
-        return jsonify(history)
+        # history=WriteHistory(TimeData,now_lat,now_lon)
+        abort(503)
     elif ask<after_3days:
         print("in 3 Days")
         data_3Days=Write_3Days(now_lat,now_lon)
@@ -39,6 +39,7 @@ def getData():
         return jsonify(data_7Days)
     else:
         print("  >7 Days use ACCU")
-        return "ACCU + history"
+        # return "ACCU + history"
+        abort(503)
 
 # getData("2021-03-26 23:59:59.628556","22.7254758","120.2628547")
