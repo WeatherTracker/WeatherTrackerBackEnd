@@ -18,7 +18,7 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
-from Recommendation.recommend import recommend
+#from Recommendation.recommend import recommend
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
@@ -49,7 +49,7 @@ app.register_blueprint(GetWeatherIcon)
 app.register_blueprint(InOrOutEvent)
 app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
-app.register_blueprint(recommend)
+#app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
