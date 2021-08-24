@@ -32,8 +32,15 @@ for j in years:
                         new_tag.get(i).get('dynamicTags').append('寒冷(黃燈)')
 
             if type(target.get(i).get('日最高紫外線指數'))==float:
-                if(target.get(i).get('日最高紫外線指數')>=8):
-                    new_tag.get(i).get('dynamicTags').append('強紫外線')
+                if(target.get(i).get('日最高紫外線指數')>=11):
+                    new_tag.get(i).get('dynamicTags').append('紫外線:危險級(紫燈)')
+                elif(target.get(i).get('日最高紫外線指數')>=8):
+                    new_tag.get(i).get('dynamicTags').append('紫外線:過量級(紅燈)')
+                elif(target.get(i).get('日最高紫外線指數')>=6):
+                    new_tag.get(i).get('dynamicTags').append("紫外線:高量級(橘燈)")
+                elif(target.get(i).get('日最高紫外線指數')>=3):
+                    new_tag.get(i).get('dynamicTags').append("紫外線:中量級(黃燈)")
+                
         
             if type(target.get(i).get('相對溼度(%)'))==float:
                 if(target.get(i).get('相對溼度(%)')>=70):

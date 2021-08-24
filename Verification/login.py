@@ -88,16 +88,21 @@ def reprofile():
             "msg":"修改完成"
             }
             
-@login.route('/googleSignUp',methods=['POST'])
+@login.route('/googleSignIn',methods=['POST'])
 def googleSignUp():
     encodedEmail=request.form['email']
     email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
     FCMToken=request.form['FCMToken']
     user=getUser()
     if(user.auth.find_one({'email':email})):
+        userId=user.auth.find_one({'email':email}).get("userId")
+        token=create_user_token(userId)
+        if FCMToken !="":
+            print("login and refresh fcm token")
+            user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         ack={"code":200,
-            "msg":"這個email已經註冊過了"
-            }
+            "msg":str(token)
+        }
         return ack
     else:
         userId=str(uuid.uuid4())
@@ -160,27 +165,6 @@ def signIn():
             print("login and refresh fcm token")
             user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         token=create_user_token(userId)
-        ack={"code":200,
-            "msg":str(token)
-        }
-        return ack
-    else:
-        ack={"code":400,
-            "msg":"帳號或密碼錯誤"
-        }
-        return ack
-@login.route('/googleSignIn',methods=['POST'])
-def googleSignIn():
-    user=getUser()
-    encodedEmail=request.form['email']
-    email=email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
-    FCMToken=request.form['FCMToken']
-    if(user.auth.find_one({'email':email,})):
-        userId=user.auth.find_one({'email':email}).get("userId")
-        token=create_user_token(userId)
-        if FCMToken !="":
-            print("login and refresh fcm token")
-            user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         ack={"code":200,
             "msg":str(token)
         }
