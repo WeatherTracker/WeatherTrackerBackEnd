@@ -1,7 +1,6 @@
 from flask import request, jsonify, Blueprint
 from pymongo import MongoClient
 from setup import get_event, getUser
-from Verification.TokenGenerator import decode_token
 ViewName = Blueprint("ViewName", __name__)
 
 @ViewName.route("/viewName")

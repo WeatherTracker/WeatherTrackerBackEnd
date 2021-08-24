@@ -47,4 +47,5 @@ def getDate():
                 startTemp=startTemp+timedelta(days=1)
     end2=time.time()
     print("回傳當月活動總共花 ",str(end2-begin)," 秒")
+    print(sorted(date))
     return jsonify(sorted(date))
