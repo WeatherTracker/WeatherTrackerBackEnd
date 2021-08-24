@@ -18,7 +18,7 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
-#from Recommendation.recommend import recommend
+from Recommendation.recommend import recommend
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
@@ -30,6 +30,7 @@ from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
 from Event.updateTag import updateTag
+from Event.ViewName import ViewName
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = get_key().get('secretKey')
@@ -49,8 +50,9 @@ app.register_blueprint(GetWeatherIcon)
 app.register_blueprint(InOrOutEvent)
 app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
-#app.register_blueprint(recommend)
+app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
+app.register_blueprint(ViewName)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -130,7 +132,6 @@ class Config(object):
             # 'hours':6
             'start_date':'2021-06-10 11:21:00',
             'minutes':30
-            
         }
     ]
 @app.route('/')
