@@ -12,4 +12,3 @@ def getAlert():
     #     i["effective"]=datetime.strftime(i["effective"], "%Y-%m-%d %H:%M:%S")
     #     i["expires"]=datetime.strftime(i["expires"], "%Y-%m-%d %H:%M:%S")
     return jsonify(result["alerts"])
-
