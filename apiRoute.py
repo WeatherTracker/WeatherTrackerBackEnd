@@ -31,7 +31,7 @@ from crawlerModel.updater2 import weatherDataUpdater
 from Recommendation.recommend import recommend
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
-from Alert.alerts import updateAlert
+from Alert.alert import getAlert
 from Alert.GetAlerts import GetAlerts
 app = create_app()
 jwt = JWTManager()
@@ -74,8 +74,8 @@ def job6_task():#更新景點API的資料
     threading.Thread(target=updatePoint).start()
 def job7_task():#每6小時更新活動的標籤
     threading.Thread(target=updateTag).start()
-def job8_task():#每天更新示警內容
-    threading.Thread(target=updateAlert).start()
+# def job8_task():#每天更新示警內容
+#     threading.Thread(target=updateAlert).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -137,14 +137,14 @@ class Config(object):
             'hours':6
             # 'start_date':'2021-06-10 11:21:00',
             # 'minutes':30
-        },
-        {
-            'id':'job8',#每天更新示警內容
-            'func':'__main__:job8_task',
-            'trigger':'interval',
-            'start_date':'2021-08-24 21:21:00',
-            'days':1
         }
+        # {
+        #     'id':'job8',#每天更新示警內容
+        #     'func':'__main__:job8_task',
+        #     'trigger':'interval',
+        #     'start_date':'2021-08-31 10:21:00',
+        #     'hours':3
+        # }
     ]
 @app.route('/')
 def index():
