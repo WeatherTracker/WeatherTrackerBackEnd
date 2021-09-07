@@ -126,7 +126,8 @@ class Config(object):
             'id':'job6',#更新景點API的資料
             'func':'__main__:job6_task',
             'trigger':'interval',
-            'start_date':'2021-06-10 02:00:00',
+            # 'start_date':'2021-06-10 02:00:00',
+            'start_date':'2021-09-07 23:05:00',
             'days':1
         },
         {

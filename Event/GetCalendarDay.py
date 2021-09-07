@@ -86,10 +86,16 @@ def getDay():
                 eventobj["startTime"] = startTime[:-3]
                 endTime = datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M:%S")
                 eventobj["endTime"] = endTime[:-3]
-                if userId == eventobj["hosts"][0]:
-                    eventobj["isAuth"] = True
-                else:
-                    eventobj["isAuth"] = False
+                for host in eventobj["hosts"]:
+                    if userId == host:
+                        eventobj["isAuth"] = True
+                        break
+                    else:
+                        eventobj["isAuth"] = False
+                # if userId == eventobj["hosts"][0]:
+                #     eventobj["isAuth"] = True
+                # else:
+                #     eventobj["isAuth"] = False
                 eventobj.pop("_id")
                 result.append(eventobj)
     return jsonify(result)
