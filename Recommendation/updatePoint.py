@@ -10,8 +10,10 @@ def updatePoint():
     allSpot = requests.get(url)
     allSpot.encoding = 'utf-8-sig'
     allSpotTest = json.loads(allSpot.text)
+    print(allSpotTest)
     try:
-        eventDb.viewPoint.update_one({"Listname": "1"},{"$set": allSpotTest["XML_Head"]})
+        # eventDb.viewPoint.update_one({"Listname": "1"},{"$set": allSpotTest["XML_Head"]})
+        eventDb.viewPoint.update_one({},{"$set": allSpotTest["XML_Head"]})
         print("成功")
     except Exception as e:
         print(e)

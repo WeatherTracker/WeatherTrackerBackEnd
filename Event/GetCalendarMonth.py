@@ -32,7 +32,7 @@ def getDate():
             startTemp=event["startTime"]
             endTemp=event["endTime"]
             while startTemp<=endTemp:
-                if startTemp>=start and startTemp<=end:
+                if startTemp>=start and startTemp<end:
                     date.add(startTemp.strftime("%Y-%m-%d"))
                 startTemp=startTemp+timedelta(days=1)
     if len(user["currentEvents"])!=0:
@@ -41,10 +41,13 @@ def getDate():
         for event in currentEventObjs:
             startTemp=event["startTime"]
             endTemp=event["endTime"]
+            print(startTemp)
             while startTemp<=endTemp:
-                if startTemp>=start and startTemp<=end:
+                print("in")
+                if startTemp>=start and startTemp<end:
                     date.add(startTemp.strftime("%Y-%m-%d"))
                 startTemp=startTemp+timedelta(days=1)
     end2=time.time()
     print("回傳當月活動總共花 ",str(end2-begin)," 秒")
+    print(sorted(date))
     return jsonify(sorted(date))

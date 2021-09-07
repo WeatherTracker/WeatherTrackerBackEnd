@@ -24,8 +24,11 @@ def getData():
     after_7days = today +datetime.timedelta(days = 7)
     if ask<today:
         print("history")
-        # history=WriteHistory(TimeData,now_lat,now_lon)
-        abort(503)
+        history=WriteHistory(TimeData,now_lat,now_lon)
+        # abort(503)
+        time_end=time.time()
+        print("回傳歷史要花",time_end-time_start,"s")
+        return jsonify(history)
     elif ask<after_3days:
         print("in 3 Days")
         data_3Days=Write_3Days(now_lat,now_lon)

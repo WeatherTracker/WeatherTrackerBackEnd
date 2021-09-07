@@ -91,6 +91,7 @@ def reprofile():
 @login.route('/googleSignIn',methods=['POST'])
 def googleSignUp():
     encodedEmail=request.form['email']
+    print(encodedEmail)
     email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
     FCMToken=request.form['FCMToken']
     user=getUser()
@@ -190,6 +191,50 @@ def signIn():
         if FCMToken !="":
             print("login and refresh fcm token")
             user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
+        token=create_user_token(userId)
+        ack={"code":200,
+            "msg":str(token)
+        }
+        return ack
+    else:
+        ack={"code":400,
+            "msg":"帳號或密碼錯誤"
+        }
+        return ack
+@login.route('/logOut',methods=['POST'])
+def logOut():
+    userToken=request.form.get('userId')
+    print(userToken)
+    #s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
+    #token=userToken.split('\'')[1] 
+    #data = s.loads(token)
+    #userId=data.get('userId')
+    userId=decode_token(userToken)
+    if(userId=="False"):
+        ack={"code":400,
+            "msg":"錯誤的userId"
+        }
+        return ack
+    else:
+        print(userId)
+        user=getUser()
+        user.auth.update({'userId':userId},
+                {"$set":{
+            'FCMToken':'',
+                }
+            },upsert=True)
+        ack={"code":200,
+            "msg":"登出成功"
+        }
+        return ack
+@login.route('/googleSignIn',methods=['POST'])
+def googleSignIn():
+    user=getUser()
+    encodedEmail=request.form['email']
+    email=base64.b64decode(base64.b64decode(encodedEmail).decode("utf-8")).decode("utf-8")
+    FCMToken=request.form['FCMToken']
+    if(user.auth.find_one({'email':email,})):
+        userId=user.auth.find_one({'email':email}).get("userId")
         token=create_user_token(userId)
         ack={"code":200,
             "msg":str(token)

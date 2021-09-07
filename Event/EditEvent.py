@@ -9,6 +9,7 @@ EditEvent=Blueprint("EditEvent", __name__)
 @EditEvent.route("/editEvent",methods=['PUT'])
 def edit():
     event=request.json
+    print(event)
     eventDb=get_event()
     eventId=event["eventId"]
     eventObj=eventDb.currentEvent.find_one({"eventId":eventId})

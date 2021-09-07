@@ -18,7 +18,8 @@ from Event.DeleteEvent import DeleteEvent
 from Event.EditEvent import EditEvent
 from Event.GetCalendarDay import GetCalendarDay
 from Event.InOrOutEvent import InOrOutEvent
-from Recommendation.recommend import recommend
+from Event.updateTag import updateTag
+from Event.ViewName import ViewName
 from Data.GetChart import GetChart
 from Data.CWS_3Days import Get_3Days_Data
 from Data.CWS_7Days import Get_7Days_Data
@@ -27,9 +28,11 @@ from Data.GetWeatherIcon import GetWeatherIcon
 from Profile.ViewProfile import ViewProfile
 from Profile.EditProfile import EditProfile
 from crawlerModel.updater2 import weatherDataUpdater
+from Recommendation.recommend import recommend
 from Recommendation.GetRecommendTime import GetRecommendTime
 from Recommendation.updatePoint import updatePoint
-from Event.updateTag import updateTag
+from Alert.alert import getAlert
+from Alert.GetAlerts import GetAlerts
 app = create_app()
 jwt = JWTManager()
 app.config['JWT_SECRET_KEY'] = get_key().get('secretKey')
@@ -51,6 +54,8 @@ app.register_blueprint(EditProfile)
 app.register_blueprint(ViewProfile)
 app.register_blueprint(recommend)
 app.register_blueprint(GetRecommendTime)
+app.register_blueprint(ViewName)
+app.register_blueprint(GetAlerts)
 jwt = JWTManager(app)
 app.config["JSON_AS_ASCII"] = False
 
@@ -69,6 +74,8 @@ def job6_task():#更新景點API的資料
     threading.Thread(target=updatePoint).start()
 def job7_task():#每6小時更新活動的標籤
     threading.Thread(target=updateTag).start()
+# def job8_task():#每天更新示警內容
+#     threading.Thread(target=updateAlert).start()
 class Config(object):
     SCHEDULEER_API_ENABLE=True
     JOBS=[
@@ -119,19 +126,26 @@ class Config(object):
             'id':'job6',#更新景點API的資料
             'func':'__main__:job6_task',
             'trigger':'interval',
-            'start_date':'2021-06-10 02:00:00',
+            # 'start_date':'2021-06-10 02:00:00',
+            'start_date':'2021-09-07 23:05:00',
             'days':1
         },
         {
             'id':'job7',#每6小時更新活動的標籤
             'func':'__main__:job7_task',
             'trigger':'interval',
-            # 'start_date':'2021-06-07 12:03:00',
-            # 'hours':6
-            'start_date':'2021-06-10 11:21:00',
-            'minutes':30
-            
+            'start_date':'2021-06-07 12:03:00',
+            'hours':6
+            # 'start_date':'2021-06-10 11:21:00',
+            # 'minutes':30
         }
+        # {
+        #     'id':'job8',#每天更新示警內容
+        #     'func':'__main__:job8_task',
+        #     'trigger':'interval',
+        #     'start_date':'2021-08-31 10:21:00',
+        #     'hours':3
+        # }
     ]
 @app.route('/')
 def index():
