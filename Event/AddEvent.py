@@ -10,6 +10,7 @@ AddEvent=Blueprint("AddEvent", __name__)
 @AddEvent.route("/newEvent",methods=['Post'])
 def create():
     event=request.json
+    print(event)
     try:
         event["eventId"]=str(uuid.uuid4())
     except Exception as e:

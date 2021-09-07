@@ -9,6 +9,8 @@ def participate():
     userDb=getUser()
     eventId=request.form["eventId"]
     token=request.form["userId"]
+    print("eventId is "+eventId)
+    print("userId is "+token)
     x=decode_token(token)
     if x=="False":
         abort(401)
