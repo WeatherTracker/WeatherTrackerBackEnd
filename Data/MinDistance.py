@@ -1,7 +1,8 @@
-from setup import get_station
+from setup import get_station,get_test,get_calculated
 import math
 import json
 db = get_station()
+test= get_test()
 def CwsMinDistance(now_lat,now_lon):
     all_data=db.CWB_Station_Location.find()
     inf = float('Inf')
@@ -129,6 +130,7 @@ def weatherIcon(now_lat,now_lon):
     city=result[0]
     district=result[1]
     print(city+" "+district)
+    calculate=get_calculated()
     target_city=db.CWB_7Days.find({"city": city})
     weather=[]
     for i in target_city:

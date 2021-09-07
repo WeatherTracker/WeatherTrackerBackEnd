@@ -200,5 +200,3 @@ def fp_recommendList(lat,lon):
         i.pop("_id")
     
     return recommendEventList
-
-print(fp_recommend(['潮濕']))

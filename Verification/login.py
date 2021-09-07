@@ -8,8 +8,8 @@ import uuid
 from . import Verificate
 import time
 from itsdangerous import TimedJSONWebSignatureSerializer,BadSignature,SignatureExpired
-from .TokenGenerator import des_decrypt,create_token,create_user_token
-from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,decode_token,create_access_token
+from .TokenGenerator import des_decrypt,create_token,create_user_token,decode_token
+from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,create_access_token
 from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
 from flask.json import jsonify
@@ -42,7 +42,7 @@ def tryMe():
             "password":password[1],
             'FCMToken':FCMToken,
             'userId':userId,
-            'userName':"user",
+            'userName':"user"+str(user.auth.find().count()),
             'pastEvents':[],
             'AHPPreference':[0.33,0.33,0.33],
             'hobbies':[],
@@ -88,7 +88,7 @@ def reprofile():
             "msg":"修改完成"
             }
             
-@login.route('/googleSignUp',methods=['POST'])
+@login.route('/googleSignIn',methods=['POST'])
 def googleSignUp():
     encodedEmail=request.form['email']
     print(encodedEmail)
@@ -96,9 +96,14 @@ def googleSignUp():
     FCMToken=request.form['FCMToken']
     user=getUser()
     if(user.auth.find_one({'email':email})):
+        userId=user.auth.find_one({'email':email}).get("userId")
+        token=create_user_token(userId)
+        if FCMToken !="":
+            print("login and refresh fcm token")
+            user.auth.update_one({"userId":userId},{"$set":{"FCMToken":FCMToken}})
         ack={"code":200,
-            "msg":"這個email已經註冊過了"
-            }
+            "msg":str(token)
+        }
         return ack
     else:
         userId=str(uuid.uuid4())
@@ -108,7 +113,7 @@ def googleSignUp():
             {"$set":{
             'FCMToken':FCMToken,
             'userId':userId,
-            'userName':"user",
+            'userName':"user"+str(user.auth.find().count()),
             'pastEvents':[],
             'AHPPreference':[0.33,0.33,0.33],
             'hobbies':[],
@@ -146,6 +151,32 @@ def register():
         ack={"code":200,
             "msg":"驗證信已發送"
             }
+        return ack
+@login.route('/logOut',methods=['POST'])
+def logOut():
+    userToken=request.form.get('userId')
+    print(type(userToken))
+    #s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
+    #token=userToken.split('\'')[1] 
+    #data = s.loads(token)
+    #userId=data.get('userId')
+    userId=decode_token(userToken)
+    if(userId=="False"):
+        ack={"code":400,
+            "msg":"錯誤的userId"
+        }
+        return ack
+    else:
+        print(userId)
+        user=getUser()
+        user.auth.update({'userId':userId},
+                {"$set":{
+            'FCMToken':'',
+                }
+            },upsert=True)
+        ack={"code":200,
+            "msg":"登出成功"
+        }
         return ack
 
 @login.route('/signIn',methods=['POST'])
