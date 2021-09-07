@@ -8,8 +8,8 @@ import uuid
 from . import Verificate
 import time
 from itsdangerous import TimedJSONWebSignatureSerializer,BadSignature,SignatureExpired
-from .TokenGenerator import des_decrypt,create_token,create_user_token
-from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,decode_token,create_access_token
+from .TokenGenerator import des_decrypt,create_token,create_user_token,decode_token
+from flask_jwt_extended import JWTManager,create_access_token,jwt_required, create_refresh_token,get_jwt_identity,create_access_token
 from flask import Flask, request, render_template,Blueprint,current_app,session
 from flask_pymongo import pymongo
 from flask.json import jsonify
@@ -150,6 +150,32 @@ def register():
         ack={"code":200,
             "msg":"驗證信已發送"
             }
+        return ack
+@login.route('/logOut',methods=['POST'])
+def logOut():
+    userToken=request.form.get('userId')
+    print(type(userToken))
+    #s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
+    #token=userToken.split('\'')[1] 
+    #data = s.loads(token)
+    #userId=data.get('userId')
+    userId=decode_token(userToken)
+    if(userId=="False"):
+        ack={"code":400,
+            "msg":"錯誤的userId"
+        }
+        return ack
+    else:
+        print(userId)
+        user=getUser()
+        user.auth.update({'userId':userId},
+                {"$set":{
+            'FCMToken':'',
+                }
+            },upsert=True)
+        ack={"code":200,
+            "msg":"登出成功"
+        }
         return ack
 
 @login.route('/signIn',methods=['POST'])

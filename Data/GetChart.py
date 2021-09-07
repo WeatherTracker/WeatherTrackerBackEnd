@@ -6,6 +6,7 @@ import json
 from setup import get_station
 from Data.MinDistance import CwsMinDistance,EpaMinDistance,Write_3Days,Write_3_To_7Days
 from Data.HistoryMinDistance import HistoryMinDistance,WriteHistory
+from Data.over7days import chartOver7Days
 
 import schedule
 import threading
@@ -38,8 +39,11 @@ def getData():
         print("爬7天要花",time_end-time_start,"s")
         return jsonify(data_7Days)
     else:
-        print("  >7 Days use ACCU")
+        print("  >7 Days use Calculated")
         # return "ACCU + history"
-        abort(503)
+        print(ask)
+        return jsonify(chartOver7Days(now_lat,now_lon,ask))
+        #dataOver7Days=chartOver7Days(now_lat,now_lon,)
+        #abort(503)
 
 # getData("2021-03-26 23:59:59.628556","22.7254758","120.2628547")

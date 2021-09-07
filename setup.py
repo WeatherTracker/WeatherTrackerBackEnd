@@ -18,6 +18,8 @@ def get_station():
     return client.station
 def get_calculated():
     return client.calculated
+def get_test():
+    return client.test
 def getSever():
     return serverIP
 def get_event():

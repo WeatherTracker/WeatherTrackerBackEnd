@@ -46,7 +46,8 @@ def des_encrypt(secret_key, s):
     en = k.encrypt(s, padmode=PAD_PKCS5) 
     return binascii.b2a_hex(en) 
 def decode_token(token):
-    s = TimedJSONWebSignatureSerializer(get_key().get('secretKey'), expires_in=36400)
+    #s = TimedJSONWebSignatureSerializer(get_key().get('secretKey'), expires_in=36400)
+    s = TimedJSONWebSignatureSerializer('FISTBRO', expires_in=36400)
     try:
         token=token.split('\'')[1] 
         data = s.loads(token)  # 驗證
