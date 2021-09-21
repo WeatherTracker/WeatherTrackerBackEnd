@@ -8,9 +8,8 @@ GetCalendarDay = Blueprint("GetCalendarDay", __name__)
 def getEvent():
     eventId = request.args["eventId"]
     eventDb = get_event()
-    
-    result = []
-    eventobj = eventDb.pastEvent.find_one({"eventId": eventId})
+    eventobj = eventDb.currentEvent.find_one({"eventId": eventId})
+    eventobj.pop("_id")
     return jsonify(eventobj)
 
 @GetCalendarDay.route("/getCalendarDay")
