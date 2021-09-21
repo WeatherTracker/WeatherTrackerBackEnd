@@ -12,8 +12,9 @@ def updatePoint():
     allSpotTest = json.loads(allSpot.text)
     print(allSpotTest)
     try:
-        # eventDb.viewPoint.update_one({"Listname": "1"},{"$set": allSpotTest["XML_Head"]})
-        eventDb.viewPoint.update_one({},{"$set": allSpotTest["XML_Head"]})
-        print("成功")
+        eventDb.viewPoint.update_one({"Listname": "1"},{"$set": allSpotTest["XML_Head"]})
+        
+        # eventDb.viewPoint.update_one({},{"$set": allSpotTest["XML_Head"]})
+        # print("成功")
     except Exception as e:
         print(e)

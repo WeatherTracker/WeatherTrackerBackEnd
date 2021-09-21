@@ -6,6 +6,7 @@ EditProfile=Blueprint("EditProfile", __name__)
 @EditProfile.route("/editProfile",methods=['PUT'])
 def edit():
     profile=request.json
+    print(profile)
     userName=profile["userName"]
     AHPPreference=profile["AHPPreference"]
     freeTime=profile["freeTime"]

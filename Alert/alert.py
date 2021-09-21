@@ -45,6 +45,8 @@ def getAlert(lat, lon):
     for ids in idData.get("result"):
         detailResponse = requests.get("https://alerts.ncdr.nat.gov.tw/api/dump/datastore?apikey="+myKey+"&capid="+ids.get("capid")+"&format=json")
         detailData = json.loads(detailResponse.text)
+        if detailData==None:
+            return {"code":200,"msg":""}
         for infoObj in detailData.get("info"):
             for area in infoObj.get("area"):
                 if area.get("circle") == None:  # 沒經緯度用地區
@@ -57,7 +59,6 @@ def getAlert(lat, lon):
                     elif areaName[:3] == targetName and (areaName[2] == "縣" or areaName[2] == "市"):
                         result+=str.strip(infoObj.get("headline"))
                         result+="\n"+str.strip(infoObj.get("description"))
-
                 else:  # 有經緯度用經緯度
                     latlon = re.split(",| ", area.get("circle"))
                     if getDistanceFromLatLonInKm(lat, lon, float(latlon[0]), float(latlon[1])) < float(latlon[2]):  # 1KM以內
@@ -65,7 +66,7 @@ def getAlert(lat, lon):
                         result+="\n"+str.strip(infoObj.get("description"))
                         # print(str.strip(infoObj.get("headline")))
                         # print(str.strip(infoObj.get("description")))
-    return result
+    return {"code":200,"msg":result}
 
 # if __name__ == "__main__":
 #     # getAlert(24.412933, 120.770286)  # 苗栗三義(無經緯度)
