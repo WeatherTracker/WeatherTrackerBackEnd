@@ -9,9 +9,10 @@ def getEvent():
     eventId = request.args["eventId"]
     eventDb = get_event()
     eventobj = eventDb.currentEvent.find_one({"eventId": eventId})
+    eventobj["startTime"]= datetime.datetime.strftime(eventobj["startTime"], "%Y-%m-%d %H:%M")
+    eventobj["endTime"]= datetime.datetime.strftime(eventobj["endTime"], "%Y-%m-%d %H:%M")
     eventobj.pop("_id")
     return jsonify(eventobj)
-
 @GetCalendarDay.route("/getCalendarDay")
 def getDay():
     day = request.args["day"]
